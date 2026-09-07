@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>메달 상점</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f9fc;font-family:Arial,"Malgun Gothic",sans-serif;color:#172033}
+.top{height:76px;background:white;border-bottom:1px solid #dfe5ee;display:flex;align-items:center;justify-content:space-between;padding:0 7vw}.brand{font-weight:950;font-size:21px}.back{text-decoration:none;color:#475569;font-weight:850}
+.hero{background:linear-gradient(135deg,#fff7ed,#eef4ff);padding:45px 0;border-bottom:1px solid #e5e7eb}.wrap{width:min(1120px,92vw);margin:auto}.heroRow{display:flex;justify-content:space-between;gap:25px;align-items:center}.hero h1{font-size:40px;margin:0 0 10px}.hero p{color:#64748b;margin:0}.wallet{background:white;border:1px solid #fed7aa;border-radius:16px;padding:18px 22px;min-width:230px}.walletBig{font-size:29px;font-weight:950;color:#b45309}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:34px 0}.itemCard{background:white;border:1px solid #dfe5ee;border-radius:17px;padding:21px;box-shadow:0 8px 24px rgba(15,23,42,.05)}.itemEmoji{font-size:42px}.itemCard h3{margin:10px 0 7px}.itemCard p{min-height:48px;color:#64748b;font-size:13px;line-height:1.55}.price{font-size:18px;font-weight:950;margin:15px 0;color:#b45309}.buyBtn{width:100%;border:0;background:#3565e8;color:white;border-radius:10px;padding:11px;font-weight:900;cursor:pointer}.buyBtn.owned{background:#e2e8f0;color:#64748b;cursor:default}
+.inventory{background:white;border:1px solid #dfe5ee;border-radius:17px;padding:20px;margin-bottom:50px}.inventory h2{margin-top:0}#ownedList{color:#64748b;line-height:1.8}
+.toast{position:fixed;right:25px;bottom:25px;background:#111827;color:white;padding:13px 17px;border-radius:10px;display:none}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.heroRow{align-items:flex-start;flex-direction:column}}
+</style></head><body>
+<header class="top"><div class="brand">🏪 메달 상점</div><a class="back" href="index.html">← 홈페이지</a></header>
+<section class="hero"><div class="wrap heroRow">
+<div><h1>보스 메달 상점</h1><p>각 STEP의 보스를 최초로 클리어하면 메달 1개를 얻습니다.<br>모은 메달로 특별한 수집 아이템을 구매해보세요.</p></div>
+<div class="wallet"><div>수집한 보스</div><div><span id="collected" class="walletBig">0</span> / 42</div><div style="margin-top:8px">사용 가능 🏅 <b id="balance">0</b>개</div></div>
+</div></section>
+<main class="wrap">
+<section class="grid">
+    <article class="itemCard" data-id="title-boss-hunter" data-cost="2">
+      <div class="itemEmoji">🏹</div>
+      <h3>보스 헌터 칭호</h3>
+      <p>보스를 쫓는 학습자에게 어울리는 수집 칭호</p>
+      <div class="price">🏅 2개</div>
+      <button class="buyBtn" onclick="buyItem('title-boss-hunter',2,this)">구매하기</button>
+    </article>
+    <article class="itemCard" data-id="tmi-starlight" data-cost="3">
+      <div class="itemEmoji">🌌</div>
+      <h3>별빛 TMI 카드</h3>
+      <p>오늘의 TMI용 별빛 테마 수집 아이템</p>
+      <div class="price">🏅 3개</div>
+      <button class="buyBtn" onclick="buyItem('tmi-starlight',3,this)">구매하기</button>
+    </article>
+    <article class="itemCard" data-id="terminal-neon" data-cost="4">
+      <div class="itemEmoji">💻</div>
+      <h3>네온 터미널 테마</h3>
+      <p>코딩 실습실용 네온 테마 수집 아이템</p>
+      <div class="price">🏅 4개</div>
+      <button class="buyBtn" onclick="buyItem('terminal-neon',4,this)">구매하기</button>
+    </article>
+    <article class="itemCard" data-id="devil-badge" data-cost="5">
+      <div class="itemEmoji">😈</div>
+      <h3>꼬마 악마 배지</h3>
+      <p>보스 클리어 기념 한정 수집 배지</p>
+      <div class="price">🏅 5개</div>
+      <button class="buyBtn" onclick="buyItem('devil-badge',5,this)">구매하기</button>
+    </article>
+    <article class="itemCard" data-id="gold-frame" data-cost="7">
+      <div class="itemEmoji">👑</div>
+      <h3>황금 프로필 프레임</h3>
+      <p>고급 프로필 장식 수집 아이템</p>
+      <div class="price">🏅 7개</div>
+      <button class="buyBtn" onclick="buyItem('gold-frame',7,this)">구매하기</button>
+    </article>
+    <article class="itemCard" data-id="legend-title" data-cost="10">
+      <div class="itemEmoji">🔥</div>
+      <h3>전설의 학습자 칭호</h3>
+      <p>많은 보스를 쓰러뜨린 학습자용 최고급 칭호</p>
+      <div class="price">🏅 10개</div>
+      <button class="buyBtn" onclick="buyItem('legend-title',10,this)">구매하기</button>
+    </article></section>
+<section class="inventory"><h2>🎒 내 소장품</h2><div id="ownedList">아직 구매한 아이템이 없습니다.</div></section>
+</main>
+<div id="toast" class="toast"></div>
+<script src="boss-economy.js"></script>
+<script>
+const ITEM_NAMES={"title-boss-hunter": "보스 헌터 칭호", "tmi-starlight": "별빛 TMI 카드", "terminal-neon": "네온 터미널 테마", "devil-badge": "꼬마 악마 배지", "gold-frame": "황금 프로필 프레임", "legend-title": "전설의 학습자 칭호"};
+function toast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window._tt);window._tt=setTimeout(()=>x.style.display="none",2200)}
+function refresh(){
+ const d=BossEconomy.load();
+ document.getElementById("collected").textContent=d.bossClears.length;
+ document.getElementById("balance").textContent=BossEconomy.balance();
+ document.querySelectorAll(".itemCard").forEach(card=>{
+   const iid=card.dataset.id,btn=card.querySelector(".buyBtn");
+   if(d.ownedItems.includes(iid)){btn.textContent="구매 완료 ✓";btn.classList.add("owned");btn.disabled=true}
+ });
+ const owned=d.ownedItems.map(id=>ITEM_NAMES[id]).filter(Boolean);
+ document.getElementById("ownedList").textContent=owned.length?owned.join(" · "):"아직 구매한 아이템이 없습니다.";
+}
+function buyItem(id,cost,btn){
+ const r=BossEconomy.buy(id,cost);
+ if(r.ok)toast("구매 완료! 소장품에 추가되었습니다.");
+ else if(r.reason==="owned")toast("이미 가지고 있는 아이템입니다.");
+ else toast("메달이 부족합니다. 보스를 더 클리어해보세요!");
+ refresh();
+}
+refresh();
+</script></body></html>

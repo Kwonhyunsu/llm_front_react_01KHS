@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux 단계 선택</title>
+<style>
+
+:root{--bg:#f4f7fb;--card:#fff;--line:#dfe5ee;--text:#10213f;--muted:#667085;--blue:#3565e8;--blue2:#5b7cff;--blue-soft:#eef4ff;--dark:#151d31}
+*{box-sizing:border-box}body{margin:0;background:#f7f9fc;font-family:Inter,Arial,"Malgun Gothic",sans-serif;color:var(--text)}a{text-decoration:none;color:inherit}
+.topbar{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 7vw;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:21px}.brandLogo{width:34px;height:34px;border:2px solid var(--blue);border-radius:9px;display:grid;place-items:center;color:var(--blue)}
+.nav{display:flex;align-items:center;gap:30px}.nav a{font-weight:800;font-size:14px;color:#27344f;padding:28px 0 20px;position:relative}.nav a.active{color:var(--blue)}.nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:10px;height:3px;background:var(--blue);border-radius:99px}
+.container{width:min(1180px,92vw);margin:0 auto}
+@media(max-width:900px){.nav{display:none}.topbar{padding:0 20px}}
+
+.wrap{width:min(1180px,94vw);margin:0 auto;padding:42px 0 70px}.head{display:flex;justify-content:space-between;gap:25px;align-items:flex-end;margin-bottom:26px}.head h1{font-size:38px;margin:0}.head p{margin:8px 0 0;color:var(--muted)}.back{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.stageCard{display:block;background:#fff;border:1px solid var(--line);border-radius:17px;padding:21px;transition:.18s;min-height:175px}.stageCard:hover{transform:translateY(-3px);border-color:#9cb5ff;box-shadow:0 12px 28px rgba(30,55,100,.08)}.stepNo{font-size:11px;font-weight:900;color:var(--blue)}.stageCard h3{font-size:21px;margin:6px 0}.stageCard p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.meta{display:flex;gap:6px;margin-top:14px}.meta span{font-size:11px;padding:5px 8px;border-radius:999px;background:#f1f5f9;font-weight:800}.go{margin-top:15px;color:var(--blue);font-weight:900}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.head{display:block}.back{display:inline-block;margin-top:16px}}
+
+.bossClearIcon{width:42px;height:42px;object-fit:contain;vertical-align:middle;margin-left:9px;filter:drop-shadow(0 3px 6px rgba(239,68,68,.18))}
+.bossClearedCard{border-color:#f59e0b!important;box-shadow:0 10px 28px rgba(245,158,11,.12)!important}
+.bossClearMini{display:inline-flex;align-items:center;font-size:10px;font-weight:900;color:#b45309;background:#fff7ed;border:1px solid #fed7aa;padding:4px 7px;border-radius:999px;margin-left:8px}
+
+</style></head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><span class="brandLogo">◇</span><span>코딩 학습실</span></a></header>
+<main class="wrap">
+<div class="head"><div><div style="font-size:52px">🐧</div><h1>Linux 단계 선택</h1><p>원하는 학습 단계를 선택하세요.</p></div><a class="back" href="linux-roadmap.html">← 로드맵 보기</a></div>
+<section class="grid">
+        <a class="stageCard" href="linux-lab.html?stage=1">
+          <div class="stepNo">STEP 1</div>
+          <h3>터미널과 기본 명령어</h3>
+          <p>pwd · ls · cd · clear · man</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=2">
+          <div class="stepNo">STEP 2</div>
+          <h3>파일과 디렉터리</h3>
+          <p>touch · mkdir · cp · mv · rm</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=3">
+          <div class="stepNo">STEP 3</div>
+          <h3>경로 이해</h3>
+          <p>절대경로 · 상대경로 · . · .. · ~</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=4">
+          <div class="stepNo">STEP 4</div>
+          <h3>파일 내용 다루기</h3>
+          <p>cat · less · head · tail · echo</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=5">
+          <div class="stepNo">STEP 5</div>
+          <h3>검색과 필터링</h3>
+          <p>find · grep · wc · sort · uniq</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=6">
+          <div class="stepNo">STEP 6</div>
+          <h3>권한과 소유권</h3>
+          <p>chmod · chown · rwx · 사용자/그룹</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=7">
+          <div class="stepNo">STEP 7</div>
+          <h3>프로세스 관리</h3>
+          <p>ps · top · kill · jobs · bg · fg</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=8">
+          <div class="stepNo">STEP 8</div>
+          <h3>리다이렉션과 파이프</h3>
+          <p> > · >> · < · | · tee</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=9">
+          <div class="stepNo">STEP 9</div>
+          <h3>압축과 아카이브</h3>
+          <p>tar · gzip · zip · unzip</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=10">
+          <div class="stepNo">STEP 10</div>
+          <h3>패키지 관리</h3>
+          <p>apt · dnf · yum · 패키지 설치/삭제</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=11">
+          <div class="stepNo">STEP 11</div>
+          <h3>네트워크 기초</h3>
+          <p>ping · curl · wget · ip · ss</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=12">
+          <div class="stepNo">STEP 12</div>
+          <h3>셸 변수와 환경</h3>
+          <p>환경변수 · export · PATH · alias</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=13">
+          <div class="stepNo">STEP 13</div>
+          <h3>Bash 스크립트</h3>
+          <p>변수 · 조건문 · 반복문 · 함수</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a>
+        <a class="stageCard" href="linux-lab.html?stage=14">
+          <div class="stepNo">STEP 14</div>
+          <h3>리눅스 실전 프로젝트</h3>
+          <p>로그 분석 · 백업 · 자동화 · 서버 관리</p>
+          <div class="meta"><span>랜덤 20</span><span>문제은행 100</span></div>
+          <div class="go">학습 시작 →</div>
+        </a></section>
+</main>
+<script src="boss-economy.js"></script>
+<script>
+(function(){
+  const lang="linux";
+  const cards=[...document.querySelectorAll('a[href*="linux-lab.html?stage="]')];
+  cards.forEach(card=>{
+    const href=card.getAttribute("href")||"";
+    const m=href.match(/stage=(\d+)/);
+    if(!m)return;
+    const stage=Number(m[1]);
+    if(!BossEconomy.isCleared(lang,stage))return;
+
+    card.classList.add("bossClearedCard");
+    const title=card.querySelector(".title")||card.querySelector("h3");
+    if(title){
+      const img=document.createElement("img");
+      img.src="boss-clear.png";
+      img.alt="보스 클리어";
+      img.title="BOSS CLEAR";
+      img.className="bossClearIcon";
+      title.appendChild(img);
+    }
+    const meta=card.querySelector(".meta");
+    if(meta){
+      const badge=document.createElement("span");
+      badge.className="bossClearMini";
+      badge.textContent="BOSS CLEAR";
+      meta.appendChild(badge);
+    }
+  });
+})();
+</script>
+
+</body></html>

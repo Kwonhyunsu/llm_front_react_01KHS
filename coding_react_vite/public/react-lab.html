@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>React 실습실</title>
+<style>
+:root{--line:#dfe5ee;--blue:#3565e8;--muted:#667085;--text:#10213f}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;font-family:Arial,"Malgun Gothic",sans-serif;color:var(--text)}
+.app{width:min(1180px,96vw);height:94vh;margin:3vh auto;background:white;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(0,0,0,.08)}
+header{min-height:88px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:16px 24px}.brand{display:flex;gap:12px;align-items:center}.logo{width:42px;height:42px;border-radius:12px;background:#111827;color:white;display:grid;place-items:center;font-size:22px}h1{margin:0;font-size:23px}.sub{font-size:12px;color:var(--muted);margin-top:4px}.progress{font-weight:800;text-align:right}.bar{width:230px;height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:9px}#fill{height:100%;background:var(--blue);width:0}
+main{display:grid;grid-template-columns:245px 1fr;min-height:0;flex:1}aside{background:#f8fafc;border-right:1px solid var(--line);padding:14px;overflow:auto}.step{display:flex;gap:10px;align-items:center;padding:9px;border-radius:9px;cursor:pointer;font-size:13px}.step.active{background:#eaf1ff;font-weight:800}.num{width:24px;height:24px;border:1px solid #cbd5e1;border-radius:50%;display:grid;place-items:center;background:white;font-size:11px;flex:none}.done .num{background:#dcfce7;border-color:#22c55e;color:#166534}
+.workspace{display:flex;flex-direction:column;min-width:0}.chat{flex:1;padding:26px 24px;overflow:auto}.intro,.mission,.feedback,.explain,.finish{max-width:850px;padding:14px 16px;border-radius:14px;line-height:1.6}.intro{background:#f3f4f6;margin-bottom:13px}.mission{background:#f3f4f6;font-weight:650}.feedback,.explain,.finish{display:none;margin-top:13px}.feedback.ok{display:block;background:#ecfdf5;border:1px solid #bbf7d0;color:#166534}.feedback.err{display:block;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}.explain{background:#eff6ff;border:1px solid #bfdbfe}
+.console{border-top:1px solid var(--line);padding:13px 16px}.terminal{display:flex;align-items:center;gap:10px;background:#111827;border-radius:14px;padding:10px 14px;min-height:96px}.prompt{color:#5fffb0;font-family:Consolas,monospace}textarea{flex:1;min-height:72px;resize:none;background:transparent;border:0;outline:0;color:white;font-family:Consolas,monospace;font-size:15px;line-height:1.5}
+button,.back{border:1px solid #cbd5e1;background:white;border-radius:9px;padding:9px 12px;font-weight:800;cursor:pointer;text-decoration:none;color:#172033}#run{background:var(--blue);color:white;border-color:var(--blue)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.hint{display:none;margin-top:10px;font-size:13px;color:#475569;line-height:1.6}#wrongHintBox{background:#fff7ed;border:1px solid #fed7aa;padding:11px;border-radius:9px;color:#9a3412}.answerCode{background:#0f172a;color:white;padding:12px;border-radius:9px;white-space:pre-wrap;font-family:Consolas,monospace}
+@media(max-width:800px){main{grid-template-columns:1fr}aside{display:none}.bar{width:150px}}
+
+.bossArena{margin-top:16px;background:linear-gradient(145deg,#fff7ed,#fff1f2);border:2px solid #fb7185;border-radius:18px;padding:20px}
+.bossHead{display:flex;align-items:center;gap:13px;margin-bottom:12px}.bossHead img{width:68px;height:68px;object-fit:contain}.bossHead h2{margin:0;font-size:24px}.bossKicker{font-size:11px;font-weight:950;color:#dc2626;letter-spacing:.7px}
+.bossMission{background:white;border:1px solid #fed7aa;border-radius:12px;padding:14px;line-height:1.65;font-weight:650}
+.bossInput{width:100%;min-height:120px;margin-top:12px;background:#111827;color:white;border:0;border-radius:12px;padding:14px;font-family:Consolas,monospace;font-size:15px;line-height:1.5;resize:vertical}
+.bossActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.bossBtn{border:0;background:#dc2626;color:white;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}.bossSubBtn{border:1px solid #fed7aa;background:white;color:#9a3412;border-radius:9px;padding:10px 13px;font-weight:850;cursor:pointer}
+.bossMessage{display:none;margin-top:12px;border-radius:11px;padding:12px;line-height:1.6}.bossMessage.ok{display:block;background:#ecfdf5;border:1px solid #86efac;color:#166534}.bossMessage.err{display:block;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}
+.medalAward{font-size:28px;font-weight:950;margin-top:8px}.bossAlready{color:#b45309;font-weight:900}
+
+</style><script>
+
+</script>
+</head><body>
+<div class="app"><header><div class="brand"><div class="logo">⚛️</div><div><h1 id="stageTitle">React 실습실</h1><div class="sub">문제은행 100개 중 랜덤 20문제</div></div></div><div class="progress"><div><span id="now">1</span> / 20 · 완료 <span id="doneCount">0</span></div><div class="bar"><div id="fill"></div></div></div></header>
+<main><aside id="sidebar"></aside><section class="workspace"><div class="chat"><div class="intro">해당 단계의 100문제 중 랜덤으로 20문제를 뽑았습니다. 같은 단계에 다시 들어오면 새로운 세트가 생성됩니다.</div><div id="mission" class="mission"></div><div id="feedback" class="feedback"></div><div id="explain" class="explain"></div><div id="finish" class="finish"></div></div>
+<div class="console"><div class="terminal"><span class="prompt">&gt;</span><textarea id="cmd" placeholder="정답을 입력하세요"></textarea><button id="run">제출</button></div><div class="actions"><a class="back" href="index.html?roadmap=react">⌂ 홈</a><a class="back" href="react-stages.html">← 단계 선택</a><button id="prev">← 이전</button><button id="next">다음 →</button><button id="hintBtn">개념 힌트</button><button id="wrongHintBtn" disabled>오답 힌트</button><button id="answerBtn">정답 보기</button><button onclick="location.reload()">새 20문제</button></div><div id="hintBox" class="hint"></div><div id="wrongHintBox" class="hint"></div><div id="answerBox" class="hint"></div></div></section></main></div>
+<script src="react-questions.js"></script>
+<script>
+const STAGE_NAMES=["", "HTML 기초", "CSS 기초", "JavaScript 기초", "DOM과 이벤트", "React 시작", "Props", "State", "이벤트 처리", "조건부 렌더링", "리스트 렌더링", "Effect와 데이터", "라우팅", "컴포넌트 설계", "React 실전 프로젝트"];
+const LANG="react";
+const LANG_LABEL="React";
+const BANKS=window.REACT_QUESTION_BANKS;
+let stage=Number(new URLSearchParams(location.search).get("stage")||1);if(stage<1||stage>14)stage=1;
+const bank=BANKS[String(stage)]||BANKS[stage];
+document.getElementById("stageTitle").textContent=`React · STEP ${stage} · ${STAGE_NAMES[stage]}`;
+
+const KEY="codingStudyStatsV2";
+function dateKey(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`;}
+function emptyLang(){return {days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:1}}
+function loadStats(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}if(!s)s={languages:{python:emptyLang(),linux:emptyLang(),react:emptyLang()},globalDays:{}};s.languages=s.languages||{};["python","linux","react"].forEach(l=>s.languages[l]=Object.assign(emptyLang(),s.languages[l]||{}));s.globalDays=s.globalDays||{};return s}
+function saveStats(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+function record(correct,pid,revealedFlag){const s=loadStats(),ls=s.languages[LANG],k=dateKey();if(!ls.days[k])ls.days[k]={solvedIds:[],revealedIds:[],correct:0,wrong:0,stages:[]};const d=ls.days[k];ls.lastStage=stage;if(!d.stages.includes(stage))d.stages.push(stage);if(correct){ls.correctSubmissions++;d.correct=(d.correct||0)+1;if(!d.solvedIds.includes(pid))d.solvedIds.push(pid);if(!ls.totalSolvedIds.includes(pid))ls.totalSolvedIds.push(pid);if(revealedFlag&&!d.revealedIds.includes(pid))d.revealedIds.push(pid);s.globalDays[k]=true}else{ls.wrongSubmissions++;d.wrong=(d.wrong||0)+1}saveStats(s)}
+
+
+function studyGroupKey(q,lang,stage){
+  const t=((q.mission||"")+" "+(q.title||"")+" "+((q.answers||[])[0]||"")).toLowerCase();
+  const rules = lang==="python" ? [
+    ["조건",["if ","elif","else","조건"]],["반복",["for ","while ","range(","반복"]],
+    ["리스트",["append(","리스트","["]],["딕셔너리",["딕셔너리","dict"]],
+    ["함수",["def ","return","함수"]],["파일",["open(","파일"]],
+    ["예외",["try:","except","예외"]],["모듈",["import ","모듈"]],
+    ["객체",["class ","self.","객체"]],["API",["requests","api"]],["입력",["input(","입력"]],["출력",["print(","출력"]]
+  ] : lang==="linux" ? [
+    ["경로",["pwd","cd ","경로"]],["파일",["touch ","mkdir ","cp ","mv ","rm ","파일","디렉터리"]],
+    ["내용",["cat ","head ","tail ","echo ","내용"]],["검색",["find ","grep ","wc ","sort ","uniq","검색"]],
+    ["권한",["chmod","chown","권한","소유"]],["프로세스",["ps ","top","kill","jobs","fg ","bg ","프로세스"]],
+    ["파이프",["|",">>", "tee","리다이렉션","파이프"]],["압축",["tar ","gzip","zip ","압축"]],
+    ["패키지",["apt ","dnf ","yum ","패키지"]],["네트워크",["ping ","curl ","wget ","ip ","ss ","네트워크"]],
+    ["환경",["export ","alias ","$path","환경변수"]],["Bash",["then"," fi"," done","bash"]]
+  ] : [
+    ["이미지",["<img","이미지","src=","alt="]],["링크",["<a ","href=","링크"]],
+    ["폼",["<input","<form","label","onchange","onsubmit","폼"]],["HTML구조",["doctype","<html","<table","<ul","<ol","시맨틱"]],
+    ["CSS",["display:","color:","padding:","grid","flex","css"]],["JS기초",["const ","let ","console.log","javascript"]],
+    ["Props",["props"," prop"]],["State",["usestate","setcount","setname","상태"]],
+    ["이벤트",["onclick","onchange","onsubmit","이벤트"]],["조건렌더링",[" ? ","&&","조건부"]],
+    ["리스트",[".map(",".filter(","key=","리스트"]],["Effect",["useeffect","fetch(","effect"]],
+    ["라우팅",["<route","<link","navigate(","라우팅"]],["설계",["children","상태 끌어올리기","컴포넌트 설계"]]
+  ];
+  for(const [g,keys] of rules) if(keys.some(k=>t.includes(k))) return g;
+  return q.family || q.title || "기타";
+}
+
+function studyCorrupt(code,lang){
+  const reps = lang==="python" ? [["==","="],["print(","pritn("],["append(","apend("],["return ","retrun "],["def ","df "]]
+    : lang==="linux" ? [["grep","gerp"],["find","fidn"],["chmod","chomd"],["mkdir","mkidr"],["curl","crul"],["export","exprot"]]
+    : [["className","class"],["onClick","onclick"],["onChange","onchange"],["useState","useStates"],["useEffect","useEffects"],["href","herf"],["src=","source="]];
+  for(const [a,b] of reps) if(code.includes(a)) return code.replace(a,b);
+  return null;
+}
+
+function studyBlank(code,lang){
+  const toks = lang==="python" ? ["print","input","int","if","elif","else","for","while","range","append","return","def","class","import","open"]
+    : lang==="linux" ? ["pwd","ls","cd","touch","mkdir","cp","mv","rm","cat","grep","find","chmod","tar","curl","wget","export","apt","dnf"]
+    : ["src","alt","href","type","name","className","onClick","onChange","useState","useEffect","map","filter","Route","Link","children"];
+  for(const t of toks) if(code.includes(t)) return [code.replace(t,"____"),t];
+  return null;
+}
+
+function makeLearningVariant(q,index,lang){
+  const x={...q,answers:[...(q.answers||[])]};
+  const answer=(x.answers||[])[0]||"";
+  const mode=index%5;
+  const group=studyGroupKey(x,lang,typeof stage==="undefined" ? 1 : stage);
+  x.family=group+" · "+["직접 작성","오류 수정","빈칸 완성","조건 추가","구조 복원"][mode];
+
+  if(mode===1){
+    const bad=studyCorrupt(answer,lang);
+    if(bad){
+      x.title=(x.title||"문제")+" · 오류 수정";
+      x.mission="다음 코드/명령의 오류를 찾아 올바른 전체 답으로 수정하세요.\n"+bad;
+      x.hint="오타, 연산자, 태그/속성 또는 명령어 이름 중 잘못된 부분을 찾아보세요.";
+    }
+  }else if(mode===2){
+    const b=studyBlank(answer,lang);
+    if(b){
+      x.title=(x.title||"문제")+" · 빈칸 완성";
+      x.mission="다음 코드/명령의 ____을 올바르게 채워 전체 답을 작성하세요.\n"+b[0];
+      x.hint="빈칸 앞뒤의 코드 흐름에서 필요한 역할을 생각하세요.";
+    }
+  }else if(mode===3){
+    const b=studyBlank(answer,lang);
+    if(b){
+      x.title=(x.title||"문제")+" · 조건 추가";
+      x.mission=(x.mission||"")+"\n추가 조건: 반드시 `"+b[1]+"` 요소를 사용해 해결하세요.";
+    }
+  }else if(mode===4 && answer.includes("\n")){
+    const lines=answer.split("\n");
+    const skeleton=lines.map((line,i)=>i%2===0?line:"____").join("\n");
+    x.title=(x.title||"문제")+" · 구조 복원";
+    x.mission="다음 코드/명령 구조에서 빠진 줄을 채워 올바른 전체 답을 작성하세요.\n"+skeleton;
+    x.hint="남아 있는 줄의 앞뒤 관계를 보고 빠진 처리 단계를 추론하세요.";
+  }
+  return x;
+}
+
+function buildDiverseSet(bank,lastIndexes,count=20){
+  const last=new Set(lastIndexes||[]);
+  let pool=bank.map((q,i)=>({...q,__index:i})).filter(q=>!last.has(q.__index));
+  if(pool.length<count) pool=bank.map((q,i)=>({...q,__index:i}));
+
+  for(let i=pool.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+
+  const selected=[], groups={}, missions=new Set(), diffs={};
+  const lang=typeof LANG!=="undefined" ? LANG : "python";
+  for(const q of pool){
+    const m=(q.mission||"").trim();
+    const g=studyGroupKey(q,lang,typeof stage==="undefined"?1:stage);
+    const d=Number(q.difficulty||1);
+    if(missions.has(m)) continue;
+    if((groups[g]||0)>=2) continue;   // broad concept max 2
+    if((diffs[d]||0)>=7) continue;
+    selected.push(q); missions.add(m); groups[g]=(groups[g]||0)+1; diffs[d]=(diffs[d]||0)+1;
+    if(selected.length===count) break;
+  }
+  // If a stage has few broad groups, fill remaining slots but still avoid exact duplicate missions.
+  for(const q of pool){
+    if(selected.length===count) break;
+    const m=(q.mission||"").trim();
+    if(missions.has(m)) continue;
+    selected.push(q); missions.add(m);
+  }
+  return selected.slice(0,count);
+}
+
+function sample20(){
+  const lastKey=`${LANG}_stage_${stage}_last`;
+  let last=[];try{last=JSON.parse(localStorage.getItem(lastKey)||"[]")}catch(e){}
+  const picked=buildDiverseSet(bank,last,20);
+  const indexes=picked.map(q=>q.__index);
+  try{localStorage.setItem(lastKey,JSON.stringify(indexes))}catch(e){}
+  return picked.map((q,i)=>makeLearningVariant({...q,bankIndex:q.__index,problemId:`${LANG.toUpperCase()}-S${stage}-Q${q.__index+1}`},i,LANG));
+}
+let questions=sample20(),current=0,wrong=0,solved={},revealed={},lastWrong="",timer=null;
+const id=x=>document.getElementById(x);
+function norm(s){return s.replace(/\r\n/g,"\n").trim().split("\n").map(x=>x.trim()).filter(Boolean).join("\n").replace(/[ \t]+/g," ")}
+function count(){return Object.values(solved).filter(Boolean).length}
+function render(){const b=id("sidebar");b.innerHTML="";questions.forEach((q,i)=>{const d=document.createElement("div");d.className="step"+(i===current?" active":"")+(solved[i]?" done":"");d.innerHTML=`<span class="num">${solved[i]?"✓":i+1}</span><span>${q.title}</span>`;d.onclick=()=>{if(timer)clearTimeout(timer);current=i;load()};b.appendChild(d)})}
+function load(){id("mission").textContent=questions[current].mission;id("now").textContent=current+1;id("doneCount").textContent=count();id("fill").style.width=(count()/20*100)+"%";id("feedback").className="feedback";id("feedback").innerHTML="";id("explain").style.display="none";id("hintBox").style.display="none";id("wrongHintBox").style.display="none";id("answerBox").style.display="none";id("wrongHintBtn").disabled=true;id("cmd").value="";lastWrong="";id("finish").style.display="none";if(solved[current]){id("feedback").className="feedback ok";id("feedback").textContent="✅ 이미 정답 처리된 문제입니다.";id("explain").style.display="block";id("explain").innerHTML="<b>해설</b><br>"+questions[current].explain}render()}
+function wrongHint(q,code){const n=norm(code),a=norm(q.answers[0]);if(!code.trim())return "먼저 답을 입력해보세요.";if(n.split("\n").length<a.split("\n").length)return "필요한 단계나 명령이 한 줄 이상 빠진 것 같습니다.";if(q.answers[0].includes("|")&&!code.includes("|"))return "두 명령의 결과를 연결해야 하는 문제인지 확인해보세요.";if(q.answers[0].includes(">")&&!code.includes(">"))return "출력 결과를 파일로 보내는 기호가 필요한지 확인해보세요.";if(q.answers[0].includes("if")&&!code.includes("if"))return "조건을 판단하는 구조가 필요한 문제입니다.";if(q.answers[0].includes("useState")&&!code.includes("useState"))return "상태를 만드는 React 훅이 필요한 문제입니다.";if(q.answers[0].includes("map")&&!code.includes("map"))return "배열을 반복 렌더링하는 메서드를 떠올려보세요.";return "전체 방향은 가깝습니다. 명령어/속성/기호/변수명을 문제 조건과 하나씩 비교해보세요."}
+function submit(){const code=id("cmd").value;if(!code.trim())return;const q=questions[current],ok=q.answers.some(a=>norm(a)===norm(code) || (window.studySemanticNorm && studySemanticNorm(a)===studySemanticNorm(code)));if(ok){const first=!solved[current];solved[current]=true;if(first)record(true,q.problemId,!!revealed[current]);id("feedback").className="feedback ok";id("feedback").innerHTML="✅ 정답입니다!<br><small>3초 후 다음 문제로 이동합니다.</small>";id("explain").style.display="block";id("explain").innerHTML="<b>해설</b><br>"+q.explain;render();id("doneCount").textContent=count();id("fill").style.width=(count()/20*100)+"%";const idx=current;timer=setTimeout(()=>{if(current!==idx)return;if(idx<19){current=idx+1;load()}else finish()},3000)}else{wrong++;record(false,q.problemId,false);lastWrong=code;id("wrongHintBtn").disabled=false;id("feedback").className="feedback err";id("feedback").textContent="❌ 아직 아니에요. 오답 힌트를 확인해보세요."}}
+function finish(){id("mission").textContent="20문제를 모두 완료했습니다.";id("feedback").style.display="none";id("explain").style.display="none";id("finish").style.display="block";id("finish").innerHTML=`<h2>🎉 STEP ${stage} 완료</h2><p>오답 시도: ${wrong}회</p><p>정답 확인: ${Object.keys(revealed).length}문제</p><a class="back" href="index.html?roadmap=react">홈에서 기록 보기</a>`}
+id("run").onclick=submit;id("cmd").addEventListener("keydown",e=>{if(e.ctrlKey&&e.key==="Enter"){e.preventDefault();submit()}});
+id("prev").onclick=()=>{if(timer)clearTimeout(timer);if(current>0){current--;load()}};id("next").onclick=()=>{if(timer)clearTimeout(timer);if(current<19){current++;load()}};
+id("hintBtn").onclick=()=>{id("hintBox").textContent="💡 "+questions[current].hint;id("hintBox").style.display="block"};
+id("wrongHintBtn").onclick=()=>{if(lastWrong){id("wrongHintBox").innerHTML="<b>🔎 오답 힌트</b><br>"+wrongHint(questions[current],lastWrong);id("wrongHintBox").style.display="block"}};
+id("answerBtn").onclick=()=>{revealed[current]=true;const box=id("answerBox");box.innerHTML="";const pre=document.createElement("pre");pre.className="answerCode";pre.textContent=questions[current].answers[0];box.appendChild(document.createTextNode("✅ 정답 예시:"));box.appendChild(pre);box.style.display="block"};
+(function(){const s=loadStats();s.languages[LANG].lastStage=stage;saveStats(s)})();
+load();
+</script>
+<script src="boss-data.js"></script>
+<script src="boss-economy.js"></script>
+<script>
+(function(){
+  const BOSS_LANG="react";
+  const stageBoss=(window.BOSS_DATA[BOSS_LANG]||{})[stage];
+  let bossAnswerRevealed=false;
+
+  function bossNormalize(code){
+    if(typeof norm==="function"){
+      try{return norm(code)}catch(e){}
+    }
+    return String(code).replace(/\r\n/g,"\n").trim().split("\n").map(s=>s.trim()).filter(Boolean).join("\n").replace(/[ \t]+/g," ");
+  }
+
+  function bossUI(){
+    if(!stageBoss)return '<p>보스 데이터를 불러올 수 없습니다.</p>';
+    const cleared=BossEconomy.isCleared(BOSS_LANG,stage);
+    return `
+      <div class="bossArena">
+        <div class="bossHead">
+          <img src="boss-clear.png" alt="보스">
+          <div>
+            <div class="bossKicker">STAGE BOSS</div>
+            <h2>${stageBoss.title}</h2>
+            ${cleared?'<div class="bossAlready">👑 이미 클리어한 보스 · 재도전 가능</div>':''}
+          </div>
+        </div>
+        <div class="bossMission">${stageBoss.mission}</div>
+        <textarea id="bossCmd" class="bossInput" placeholder="보스 문제의 답을 입력하세요"></textarea>
+        <div class="bossActions">
+          <button class="bossBtn" onclick="submitStageBoss()">⚔ 보스에게 도전</button>
+          <button class="bossSubBtn" onclick="showBossHint()">💡 보스 힌트</button>
+          <button class="bossSubBtn" onclick="showBossAnswer()">👀 정답 보기</button>
+        </div>
+        <div id="bossMessage" class="bossMessage"></div>
+      </div>`;
+  }
+
+  window.showStageBoss=function(){
+    const box=id("finish");
+    box.style.display="block";
+    box.innerHTML=`
+      <h2>🎉 랜덤 20문제 완료!</h2>
+      <p>이제 이 STEP의 마지막 관문이 열렸습니다.</p>
+      ${bossUI()}
+    `;
+    id("mission").textContent="🔥 BOSS STAGE가 등장했습니다!";
+    if(id("feedback"))id("feedback").style.display="none";
+    if(id("explain"))id("explain").style.display="none";
+  };
+
+  window.submitStageBoss=function(){
+    if(!stageBoss)return;
+    const input=document.getElementById("bossCmd");
+    const msg=document.getElementById("bossMessage");
+    const ok=bossNormalize(input.value)===bossNormalize(stageBoss.answer);
+    if(!ok){
+      msg.className="bossMessage err";
+      msg.innerHTML="❌ 아직 보스를 쓰러뜨리지 못했습니다.<br>문제의 조건과 코드/명령 구조를 다시 확인해보세요.";
+      return;
+    }
+
+    const award=BossEconomy.award(BOSS_LANG,stage);
+    msg.className="bossMessage ok";
+    if(award.first){
+      msg.innerHTML=`✅ <b>BOSS CLEAR!</b><br>${stageBoss.explain}<div class="medalAward">🏅 메달 1개 획득!</div><div>현재 수집 메달 ${award.total}/42 · 사용 가능 ${award.balance}개</div><p><a class="back" href="${BOSS_LANG}-stages.html">단계 선택에서 클리어 증표 보기 →</a></p>`;
+    }else{
+      msg.innerHTML=`✅ <b>보스 재클리어!</b><br>${stageBoss.explain}<div>이 단계의 메달은 이미 획득했습니다.</div><p><a class="back" href="${BOSS_LANG}-stages.html">클리어 증표 보기 →</a></p>`;
+    }
+  };
+
+  window.showBossHint=function(){
+    const msg=document.getElementById("bossMessage");
+    msg.className="bossMessage err";
+    msg.innerHTML="💡 "+stageBoss.hint;
+  };
+
+  window.showBossAnswer=function(){
+    bossAnswerRevealed=true;
+    const msg=document.getElementById("bossMessage");
+    msg.className="bossMessage err";
+    msg.innerHTML="<b>보스 정답 예시</b><pre style='white-space:pre-wrap;background:#111827;color:white;padding:12px;border-radius:9px'>"+stageBoss.answer.replace(/</g,"&lt;").replace(/>/g,"&gt;")+"</pre>";
+  };
+
+  // Override the original completion screen.
+  window.finish=function(){
+    showStageBoss();
+  };
+})();
+</script>
+
+
+<script>
+(function enableSmartIndent(){
+  const editor = document.getElementById("cmd");
+  if (!editor || editor.dataset.smartIndent === "on") return;
+  editor.dataset.smartIndent = "on";
+
+  const INDENT = "    ";
+
+  function lineInfo(pos){
+    const value = editor.value;
+    const start = value.lastIndexOf("\n", Math.max(0, pos - 1)) + 1;
+    const endIndex = value.indexOf("\n", pos);
+    const end = endIndex === -1 ? value.length : endIndex;
+    return { value, start, end, line: value.slice(start, end) };
+  }
+
+  function replaceSelection(text, start, end, caretOffset=text.length){
+    const value = editor.value;
+    editor.value = value.slice(0, start) + text + value.slice(end);
+    const caret = start + caretOffset;
+    editor.selectionStart = editor.selectionEnd = caret;
+  }
+
+  editor.addEventListener("keydown", function(e){
+    // Ctrl+Enter remains "submit"
+    if (e.ctrlKey && e.key === "Enter") return;
+
+    // TAB = four spaces
+    if (e.key === "Tab" && !e.shiftKey){
+      e.preventDefault();
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+
+      if (start === end){
+        replaceSelection(INDENT, start, end);
+      } else {
+        // Indent all selected lines.
+        const value = editor.value;
+        const blockStart = value.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+        const selected = value.slice(blockStart, end);
+        const indented = selected.split("\n").map(line => INDENT + line).join("\n");
+        editor.value = value.slice(0, blockStart) + indented + value.slice(end);
+        editor.selectionStart = start + INDENT.length;
+        editor.selectionEnd = end + INDENT.length * selected.split("\n").length;
+      }
+      return;
+    }
+
+    // SHIFT+TAB = outdent
+    if (e.key === "Tab" && e.shiftKey){
+      e.preventDefault();
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const value = editor.value;
+      const blockStart = value.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+      const selected = value.slice(blockStart, end);
+      const lines = selected.split("\n");
+
+      let removedBeforeStart = 0;
+      let removedTotal = 0;
+      const outdented = lines.map((line, idx) => {
+        const m = line.match(/^( {1,4}|\t)/);
+        if (!m) return line;
+        const n = m[0].length;
+        removedTotal += n;
+        if (idx === 0) removedBeforeStart = n;
+        return line.slice(n);
+      }).join("\n");
+
+      editor.value = value.slice(0, blockStart) + outdented + value.slice(end);
+      editor.selectionStart = Math.max(blockStart, start - removedBeforeStart);
+      editor.selectionEnd = Math.max(editor.selectionStart, end - removedTotal);
+      return;
+    }
+
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const info = lineInfo(start);
+
+    const beforeCaret = info.value.slice(info.start, start);
+    const currentIndent = (beforeCaret.match(/^[ \t]*/) || [""])[0];
+    const trimmed = beforeCaret.trimEnd();
+
+    let extraIndent = "";
+
+    // Python block starters.
+    if (trimmed.endsWith(":")) {
+      extraIndent = INDENT;
+    }
+
+    // JavaScript / JSX / CSS / Bash function blocks.
+    if (trimmed.endsWith("{")) {
+      extraIndent = INDENT;
+    }
+
+    // Bash control-flow block starters.
+    if (/\b(then|do)\s*$/.test(trimmed)) {
+      extraIndent = INDENT;
+    }
+
+    // React/JS multiline arrow/function patterns ending with =>
+    // are not indented unless they also open a brace.
+    const newIndent = currentIndent + extraIndent;
+    replaceSelection("\n" + newIndent, start, end);
+
+    // Keep the newly indented area visible.
+    editor.scrollTop = editor.scrollHeight;
+  }, true);
+})();
+</script>
+
+
+<script>
+(function(){
+  if(typeof norm!=="function")return;
+  const baseNorm=norm;
+  window.studySemanticNorm=function(s){
+    let x=String(s).replace(/\r\n/g,"\n").trim();
+    // Normalize simple single/double quoted literals.
+    x=x.replace(/'([^'\\]*)'/g,(_,v)=>JSON.stringify(v));
+    if(typeof LANG!=="undefined" && LANG==="react"){
+      x=x.replace(/;/g,"")
+         .replace(/\(\s*([A-Za-z_$][\w$]*)\s*\)\s*=>/g,"$1=>")
+         .replace(/\s*\/>/g,"/>");
+    }
+    if(typeof LANG!=="undefined" && LANG==="linux"){
+      x=x.replace(/"([A-Za-z0-9._\/:-]+)"/g,"$1");
+      // Common equivalent home-directory command.
+      if(x==="cd ~")x="cd";
+      // head/tail -n 5 == -5
+      x=x.replace(/^(head|tail)\s+-n\s+(\d+)\s+/,"$1 -$2 ");
+    }
+    return x.split("\n").map(v=>v.trim().replace(/\s+/g," ")).filter(Boolean).join("\n");
+  };
+})();
+</script>
+
+</body></html>

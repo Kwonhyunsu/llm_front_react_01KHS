@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python 실습실</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f7;font-family:Arial,"Malgun Gothic",sans-serif;color:#172033}
+.app{width:min(1180px,96vw);height:94vh;margin:3vh auto;background:#fff;border:1px solid #d6dde8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(0,0,0,.1)}
+header{min-height:90px;border-bottom:1px solid #d6dde8;display:flex;align-items:center;justify-content:space-between;padding:16px 26px;gap:20px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:12px;background:#111827;color:white;display:grid;place-items:center;font-size:22px}.brand h1{margin:0;font-size:23px}.sub{color:#667085;font-size:13px;margin-top:4px}
+.headRight{text-align:right;font-weight:800}.bar{width:250px;height:9px;background:#e5e7eb;border-radius:99px;margin-top:9px;overflow:hidden}.fill{height:100%;background:#2563eb;width:0}
+main{display:grid;grid-template-columns:250px 1fr;min-height:0;flex:1}aside{background:#f8fafc;border-right:1px solid #d6dde8;padding:15px;overflow:auto}.step{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;cursor:pointer;font-size:14px}.step.active{background:#eaf1ff;font-weight:800}.num{width:25px;height:25px;border:1px solid #cbd5e1;border-radius:50%;display:grid;place-items:center;background:#fff;font-size:12px;flex:none}.step.done .num{background:#dcfce7;border-color:#22c55e;color:#166534}
+.workspace{display:flex;flex-direction:column;min-width:0}.chat{flex:1;padding:28px 24px;overflow:auto}.intro,.mission,.feedback,.explain,.finish{max-width:850px;padding:15px 17px;border-radius:14px;line-height:1.65}.intro{background:#f3f4f6;margin-bottom:14px}.mission{background:#f3f4f6;font-weight:650}.feedback,.explain,.finish{display:none;margin-top:14px}.feedback.ok{display:block;background:#ecfdf5;border:1px solid #bbf7d0;color:#166534}.feedback.err{display:block;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}.explain{background:#eff6ff;border:1px solid #bfdbfe}
+.console{border-top:1px solid #d6dde8;padding:14px 18px}.terminal{display:flex;align-items:center;gap:10px;background:#111827;border-radius:14px;padding:10px 14px;min-height:100px}.prompt{color:#5fffb0;font-family:Consolas,monospace}textarea{flex:1;min-height:76px;resize:none;background:transparent;border:0;outline:0;color:#fff;font-family:Consolas,monospace;font-size:16px;line-height:1.5}
+button,.back{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;color:#172033}#run{background:#2563eb;color:#fff;border-color:#2563eb}.actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}.left{display:flex;gap:8px;flex-wrap:wrap}.hint{display:none;margin-top:10px;color:#475569;font-size:14px;line-height:1.6}.answerCode{margin:8px 0;background:#0f172a;color:#f8fafc;padding:14px;border-radius:10px;white-space:pre-wrap;font-family:Consolas,monospace}
+#wrongHintBox{background:#fff7ed;border:1px solid #fed7aa;padding:12px;border-radius:10px;color:#9a3412}
+@media(max-width:800px){main{grid-template-columns:1fr}aside{display:none}.bar{width:160px}}
+
+.tutorFab{
+  position:fixed;right:28px;bottom:28px;z-index:60;
+  border:0;border-radius:999px;padding:14px 18px;
+  background:linear-gradient(135deg,#5b6cf6,#7a5cff);
+  color:#fff;font-weight:900;cursor:pointer;
+  box-shadow:0 14px 30px rgba(91,108,246,.28);
+}
+.tutorFab:hover{transform:translateY(-2px)}
+.tutorPanel{
+  position:fixed;top:0;right:-420px;width:min(410px,94vw);height:100vh;
+  background:#fff;z-index:80;border-left:1px solid #dfe5ee;
+  box-shadow:-18px 0 40px rgba(22,37,68,.14);
+  display:flex;flex-direction:column;transition:right .25s ease;
+}
+.tutorPanel.open{right:0}
+.tutorHeader{
+  padding:17px 18px;border-bottom:1px solid #e4e9f1;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tutorHeaderLeft{display:flex;align-items:center;gap:10px}
+.tutorAvatar{
+  width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(135deg,#eef1ff,#e9e3ff);
+  display:grid;place-items:center;font-size:22px
+}
+.tutorName{font-weight:900}.tutorStatus{font-size:11px;color:#16a34a;margin-top:2px}
+.tutorClose{border:0;background:#f3f4f6;border-radius:8px;width:32px;height:32px;cursor:pointer}
+.tutorContext{
+  padding:12px 14px;background:#f8fafc;border-bottom:1px solid #e4e9f1;
+  font-size:12px;color:#64748b;line-height:1.5
+}
+.tutorContext b{color:#334155}
+.tutorMessages{
+  flex:1;overflow:auto;padding:16px;background:#fbfcff
+}
+.msg{display:flex;margin-bottom:12px}
+.msg.user{justify-content:flex-end}
+.bubbleTutor,.bubbleUser{
+  max-width:84%;padding:11px 13px;border-radius:14px;line-height:1.55;
+  font-size:13px;white-space:pre-wrap
+}
+.bubbleTutor{background:#eef3ff;color:#243657;border-top-left-radius:5px}
+.bubbleUser{background:#4d67e8;color:#fff;border-top-right-radius:5px}
+.tutorQuick{
+  padding:10px 12px;border-top:1px solid #e4e9f1;display:flex;gap:7px;flex-wrap:wrap
+}
+.quickBtn{
+  border:1px solid #d7def0;background:#fff;color:#45536d;
+  border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;cursor:pointer
+}
+.quickBtn:hover{background:#eef4ff;color:#3565e8}
+.tutorInputWrap{
+  padding:12px;border-top:1px solid #e4e9f1;display:flex;gap:8px
+}
+.tutorInput{
+  flex:1;border:1px solid #d7deea;border-radius:11px;padding:11px 12px;
+  outline:0;font-family:inherit;font-size:13px
+}
+.tutorSend{
+  border:0;background:#4d67e8;color:#fff;border-radius:10px;
+  padding:0 14px;font-weight:900;cursor:pointer
+}
+.tutorOverlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.18);
+  z-index:70;display:none
+}
+.tutorOverlay.show{display:block}
+.tutorHintTag{
+  display:inline-block;font-size:10px;font-weight:900;color:#5b57c7;
+  background:#edeaff;padding:3px 6px;border-radius:999px;margin-bottom:6px
+}
+
+
+.bossArena{margin-top:16px;background:linear-gradient(145deg,#fff7ed,#fff1f2);border:2px solid #fb7185;border-radius:18px;padding:20px}
+.bossHead{display:flex;align-items:center;gap:13px;margin-bottom:12px}.bossHead img{width:68px;height:68px;object-fit:contain}.bossHead h2{margin:0;font-size:24px}.bossKicker{font-size:11px;font-weight:950;color:#dc2626;letter-spacing:.7px}
+.bossMission{background:white;border:1px solid #fed7aa;border-radius:12px;padding:14px;line-height:1.65;font-weight:650}
+.bossInput{width:100%;min-height:120px;margin-top:12px;background:#111827;color:white;border:0;border-radius:12px;padding:14px;font-family:Consolas,monospace;font-size:15px;line-height:1.5;resize:vertical}
+.bossActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.bossBtn{border:0;background:#dc2626;color:white;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}.bossSubBtn{border:1px solid #fed7aa;background:white;color:#9a3412;border-radius:9px;padding:10px 13px;font-weight:850;cursor:pointer}
+.bossMessage{display:none;margin-top:12px;border-radius:11px;padding:12px;line-height:1.6}.bossMessage.ok{display:block;background:#ecfdf5;border:1px solid #86efac;color:#166534}.bossMessage.err{display:block;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}
+.medalAward{font-size:28px;font-weight:950;margin-top:8px}.bossAlready{color:#b45309;font-weight:900}
+
+</style><script>
+
+</script>
+</head><body>
+<div class="app"><header><div class="brand"><div class="logo">🐍</div><div><h1 id="stageTitle">Python 실습실</h1><div class="sub" id="stageSub">문제은행 100개에서 랜덤 20문제</div></div></div><div class="headRight"><div><span id="now">1</span> / 20 · 완료 <span id="doneCount">0</span></div><div class="bar"><div id="fill" class="fill"></div></div></div></header>
+<main><aside id="sidebar"></aside><section class="workspace"><div class="chat"><div class="intro">이번 세트는 해당 단계의 100문제 중 랜덤 20문제입니다. 같은 단계에 다시 들어오면 새로운 세트가 생성됩니다.</div><div id="mission" class="mission"></div><div id="feedback" class="feedback"></div><div id="explain" class="explain"></div><div id="finish" class="finish"></div></div>
+<div class="console"><div class="terminal"><span class="prompt">&gt;&gt;&gt;</span><textarea id="cmd" placeholder="파이썬 코드를 직접 작성하세요"></textarea><button id="run">실행</button></div>
+<div class="actions"><div class="left"><a class="back" href="index.html">⌂ 홈</a><a class="back" href="python-stages.html">← 단계 선택</a><button id="prev">← 이전</button><button id="next">다음 →</button><button id="hintBtn">개념 힌트</button><button id="wrongHintBtn" disabled>오답 힌트</button><button id="answerBtn">정답 보기</button><button id="newSetBtn">새 20문제</button></div></div>
+<div id="hintBox" class="hint"></div><div id="wrongHintBox" class="hint"></div><div id="answerBox" class="hint"></div></div></section></main></div>
+<script src="questions.js"></script>
+<script>
+const STAGE_NAMES=["","출력과 변수","조건문","반복문","리스트와 문자열","딕셔너리와 자료구조","함수","파일 처리","예외 처리와 디버깅","모듈과 라이브러리","객체지향","자동화","API와 외부 데이터","프로젝트 설계","실전 프로젝트"];
+const STUDY_KEY="codingStudyStatsV1";
+const params=new URLSearchParams(location.search);
+let stage=Number(params.get("stage")||1);
+if(stage<1||stage>14)stage=1;
+const bank=window.QUESTION_BANKS[String(stage)]||window.QUESTION_BANKS[stage];
+document.getElementById("stageTitle").textContent=`STEP ${stage} · ${STAGE_NAMES[stage]}`;
+
+function localDateKey(d=new Date()){
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function loadStats(){
+  try{
+    const s=JSON.parse(localStorage.getItem(STUDY_KEY)||"{}");
+    return {
+      days:s.days||{},
+      totalSolvedIds:s.totalSolvedIds||[],
+      correctSubmissions:s.correctSubmissions||0,
+      wrongSubmissions:s.wrongSubmissions||0,
+      lastStage:s.lastStage||stage
+    };
+  }catch(e){
+    return {days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:stage};
+  }
+}
+function saveStats(s){
+  try{localStorage.setItem(STUDY_KEY,JSON.stringify(s))}catch(e){}
+}
+function ensureToday(s){
+  const k=localDateKey();
+  if(!s.days[k]) s.days[k]={solvedIds:[],revealedIds:[],correct:0,wrong:0,stages:[]};
+  return s.days[k];
+}
+function recordAttempt(isCorrect,problemId,wasRevealed){
+  const s=loadStats();
+  const today=ensureToday(s);
+  s.lastStage=stage;
+  if(!today.stages.includes(stage)) today.stages.push(stage);
+
+  if(isCorrect){
+    s.correctSubmissions++;
+    today.correct=(today.correct||0)+1;
+    if(!today.solvedIds.includes(problemId)) today.solvedIds.push(problemId);
+    if(!s.totalSolvedIds.includes(problemId)) s.totalSolvedIds.push(problemId);
+    if(wasRevealed && !today.revealedIds.includes(problemId)) today.revealedIds.push(problemId);
+  }else{
+    s.wrongSubmissions++;
+    today.wrong=(today.wrong||0)+1;
+  }
+  saveStats(s);
+}
+
+
+function studyGroupKey(q,lang,stage){
+  const t=((q.mission||"")+" "+(q.title||"")+" "+((q.answers||[])[0]||"")).toLowerCase();
+  const rules = lang==="python" ? [
+    ["조건",["if ","elif","else","조건"]],["반복",["for ","while ","range(","반복"]],
+    ["리스트",["append(","리스트","["]],["딕셔너리",["딕셔너리","dict"]],
+    ["함수",["def ","return","함수"]],["파일",["open(","파일"]],
+    ["예외",["try:","except","예외"]],["모듈",["import ","모듈"]],
+    ["객체",["class ","self.","객체"]],["API",["requests","api"]],["입력",["input(","입력"]],["출력",["print(","출력"]]
+  ] : lang==="linux" ? [
+    ["경로",["pwd","cd ","경로"]],["파일",["touch ","mkdir ","cp ","mv ","rm ","파일","디렉터리"]],
+    ["내용",["cat ","head ","tail ","echo ","내용"]],["검색",["find ","grep ","wc ","sort ","uniq","검색"]],
+    ["권한",["chmod","chown","권한","소유"]],["프로세스",["ps ","top","kill","jobs","fg ","bg ","프로세스"]],
+    ["파이프",["|",">>", "tee","리다이렉션","파이프"]],["압축",["tar ","gzip","zip ","압축"]],
+    ["패키지",["apt ","dnf ","yum ","패키지"]],["네트워크",["ping ","curl ","wget ","ip ","ss ","네트워크"]],
+    ["환경",["export ","alias ","$path","환경변수"]],["Bash",["then"," fi"," done","bash"]]
+  ] : [
+    ["이미지",["<img","이미지","src=","alt="]],["링크",["<a ","href=","링크"]],
+    ["폼",["<input","<form","label","onchange","onsubmit","폼"]],["HTML구조",["doctype","<html","<table","<ul","<ol","시맨틱"]],
+    ["CSS",["display:","color:","padding:","grid","flex","css"]],["JS기초",["const ","let ","console.log","javascript"]],
+    ["Props",["props"," prop"]],["State",["usestate","setcount","setname","상태"]],
+    ["이벤트",["onclick","onchange","onsubmit","이벤트"]],["조건렌더링",[" ? ","&&","조건부"]],
+    ["리스트",[".map(",".filter(","key=","리스트"]],["Effect",["useeffect","fetch(","effect"]],
+    ["라우팅",["<route","<link","navigate(","라우팅"]],["설계",["children","상태 끌어올리기","컴포넌트 설계"]]
+  ];
+  for(const [g,keys] of rules) if(keys.some(k=>t.includes(k))) return g;
+  return q.family || q.title || "기타";
+}
+
+function studyCorrupt(code,lang){
+  const reps = lang==="python" ? [["==","="],["print(","pritn("],["append(","apend("],["return ","retrun "],["def ","df "]]
+    : lang==="linux" ? [["grep","gerp"],["find","fidn"],["chmod","chomd"],["mkdir","mkidr"],["curl","crul"],["export","exprot"]]
+    : [["className","class"],["onClick","onclick"],["onChange","onchange"],["useState","useStates"],["useEffect","useEffects"],["href","herf"],["src=","source="]];
+  for(const [a,b] of reps) if(code.includes(a)) return code.replace(a,b);
+  return null;
+}
+
+function studyBlank(code,lang){
+  const toks = lang==="python" ? ["print","input","int","if","elif","else","for","while","range","append","return","def","class","import","open"]
+    : lang==="linux" ? ["pwd","ls","cd","touch","mkdir","cp","mv","rm","cat","grep","find","chmod","tar","curl","wget","export","apt","dnf"]
+    : ["src","alt","href","type","name","className","onClick","onChange","useState","useEffect","map","filter","Route","Link","children"];
+  for(const t of toks) if(code.includes(t)) return [code.replace(t,"____"),t];
+  return null;
+}
+
+function makeLearningVariant(q,index,lang){
+  const x={...q,answers:[...(q.answers||[])]};
+  const answer=(x.answers||[])[0]||"";
+  const mode=index%5;
+  const group=studyGroupKey(x,lang,typeof stage==="undefined" ? 1 : stage);
+  x.family=group+" · "+["직접 작성","오류 수정","빈칸 완성","조건 추가","구조 복원"][mode];
+
+  if(mode===1){
+    const bad=studyCorrupt(answer,lang);
+    if(bad){
+      x.title=(x.title||"문제")+" · 오류 수정";
+      x.mission="다음 코드/명령의 오류를 찾아 올바른 전체 답으로 수정하세요.\n"+bad;
+      x.hint="오타, 연산자, 태그/속성 또는 명령어 이름 중 잘못된 부분을 찾아보세요.";
+    }
+  }else if(mode===2){
+    const b=studyBlank(answer,lang);
+    if(b){
+      x.title=(x.title||"문제")+" · 빈칸 완성";
+      x.mission="다음 코드/명령의 ____을 올바르게 채워 전체 답을 작성하세요.\n"+b[0];
+      x.hint="빈칸 앞뒤의 코드 흐름에서 필요한 역할을 생각하세요.";
+    }
+  }else if(mode===3){
+    const b=studyBlank(answer,lang);
+    if(b){
+      x.title=(x.title||"문제")+" · 조건 추가";
+      x.mission=(x.mission||"")+"\n추가 조건: 반드시 `"+b[1]+"` 요소를 사용해 해결하세요.";
+    }
+  }else if(mode===4 && answer.includes("\n")){
+    const lines=answer.split("\n");
+    const skeleton=lines.map((line,i)=>i%2===0?line:"____").join("\n");
+    x.title=(x.title||"문제")+" · 구조 복원";
+    x.mission="다음 코드/명령 구조에서 빠진 줄을 채워 올바른 전체 답을 작성하세요.\n"+skeleton;
+    x.hint="남아 있는 줄의 앞뒤 관계를 보고 빠진 처리 단계를 추론하세요.";
+  }
+  return x;
+}
+
+function buildDiverseSet(bank,lastIndexes,count=20){
+  const last=new Set(lastIndexes||[]);
+  let pool=bank.map((q,i)=>({...q,__index:i})).filter(q=>!last.has(q.__index));
+  if(pool.length<count) pool=bank.map((q,i)=>({...q,__index:i}));
+
+  for(let i=pool.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+
+  const selected=[], groups={}, missions=new Set(), diffs={};
+  const lang=typeof LANG!=="undefined" ? LANG : "python";
+  for(const q of pool){
+    const m=(q.mission||"").trim();
+    const g=studyGroupKey(q,lang,typeof stage==="undefined"?1:stage);
+    const d=Number(q.difficulty||1);
+    if(missions.has(m)) continue;
+    if((groups[g]||0)>=2) continue;   // broad concept max 2
+    if((diffs[d]||0)>=7) continue;
+    selected.push(q); missions.add(m); groups[g]=(groups[g]||0)+1; diffs[d]=(diffs[d]||0)+1;
+    if(selected.length===count) break;
+  }
+  // If a stage has few broad groups, fill remaining slots but still avoid exact duplicate missions.
+  for(const q of pool){
+    if(selected.length===count) break;
+    const m=(q.mission||"").trim();
+    if(missions.has(m)) continue;
+    selected.push(q); missions.add(m);
+  }
+  return selected.slice(0,count);
+}
+
+function sample20(){
+  const lastKey=`python_stage_${stage}_last`;
+  let last=[];try{last=JSON.parse(localStorage.getItem(lastKey)||"[]")}catch(e){}
+  const picked=buildDiverseSet(bank,last,20);
+  const indexes=picked.map(q=>q.__index);
+  try{localStorage.setItem(lastKey,JSON.stringify(indexes))}catch(e){}
+  return picked.map((q,i)=>makeLearningVariant({...q,bankIndex:q.__index,problemId:`S${stage}-Q${q.__index+1}`},i,"python"));
+}
+
+let questions=sample20(),current=0,wrong=0,solved={},revealed={},lastWrongCode="",timer=null;
+const id=x=>document.getElementById(x);
+
+function norm(code){
+ code=code.replace(/\r\n/g,"\n").trim();let lines=code.split("\n"),res=[];
+ for(const raw0 of lines){
+   if(!raw0.trim())continue;
+   let raw=raw0,ind=/^[ \t]+/.test(raw)?"§":"",line=raw.replace(/^[ \t]+/,""),out="",q=null,str="",esc=false;
+   for(const ch of line){
+     if(q!==null){
+       if(esc){str+=ch;esc=false}
+       else if(ch==="\\"){esc=true}
+       else if(ch===q){out+="STR["+str+"]";q=null;str=""}
+       else str+=ch;
+     }else{
+       if(ch==="'"||ch==='"'){q=ch;str=""}
+       else if(ch===" "||ch==="\t")continue;
+       else out+=ch;
+     }
+   }
+   if(q!==null)out+="UNFINISHED["+str+"]";
+   res.push(ind+out);
+ }
+ return res.join("\n");
+}
+function count(){return Object.values(solved).filter(Boolean).length}
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function render(){
+ let b=id("sidebar");b.innerHTML="";
+ questions.forEach((q,i)=>{
+   let d=document.createElement("div");
+   d.className="step"+(i===current?" active":"")+(solved[i]?" done":"");
+   d.innerHTML=`<span class="num">${solved[i]?"✓":i+1}</span><span>${q.title}</span>`;
+   d.onclick=()=>{if(timer)clearTimeout(timer);current=i;load()};
+   b.appendChild(d);
+ })
+}
+function load(){
+ id("mission").textContent=questions[current].mission;
+ id("now").textContent=current+1;
+ id("doneCount").textContent=count();
+ id("fill").style.width=(count()/20*100)+"%";
+ id("feedback").className="feedback";id("feedback").innerHTML="";
+ id("explain").style.display="none";
+ id("hintBox").style.display="none";id("wrongHintBox").style.display="none";id("answerBox").style.display="none";
+ id("wrongHintBtn").disabled=true;id("cmd").value="";lastWrongCode="";id("finish").style.display="none";
+ if(solved[current]){
+   id("feedback").className="feedback ok";
+   id("feedback").innerHTML="✅ 이미 정답 처리된 문제입니다.";
+   id("explain").style.display="block";
+   id("explain").innerHTML="<b>📘 해설</b><br>"+questions[current].explain;
+ }
+ render();
+}
+function getWrongHint(q,code){
+ let c=code.replace(/\r\n/g,"\n"),lines=c.split("\n");
+ if(!c.trim())return "코드를 먼저 입력해보세요.";
+ for(const line of lines){
+   let t=line.trim();
+   if(/^(if|elif)\b/.test(t)&&!t.endsWith(":"))return "조건문 줄의 끝부분을 다시 확인해보세요. 블록이 시작된다는 표시가 필요합니다.";
+   if(/^else\b/.test(t)&&!t.endsWith(":"))return "else 줄의 끝부분을 다시 확인해보세요.";
+ }
+ for(let i=0;i<lines.length-1;i++){
+   let t=lines[i].trim();
+   if((/^(if|elif)\b/.test(t)||/^else\s*:/.test(t))&&t.endsWith(":")&&lines[i+1].trim()&&!/^[ \t]+/.test(lines[i+1]))
+     return "조건문 아래에서 실행되는 코드는 들여쓰기가 필요합니다.";
+ }
+ if(q.answers[0].includes("int(input")&&c.includes("input(")&&!c.includes("int("))return "입력은 받고 있지만 숫자로 계산하려면 자료형 변환이 필요합니다.";
+ if(q.answers[0].includes("return")&&!c.includes("return"))return "함수에서 계산한 값을 호출한 곳으로 돌려주는 부분이 빠진 것 같습니다.";
+ if(q.answers[0].includes("for ")&&!/\bfor\b/.test(c))return "이 문제는 정해진 횟수만큼 반복하는 구조가 필요합니다.";
+ if(q.answers[0].includes("while ")&&!/\bwhile\b/.test(c))return "조건이 참인 동안 반복하는 구조가 필요합니다.";
+ if(q.answers[0].includes("def ")&&!/\bdef\b/.test(c))return "반복해서 사용할 기능을 함수로 정의해야 합니다.";
+ if(q.answers[0].includes("class ")&&!/\bclass\b/.test(c))return "객체의 구조를 정의하는 클래스가 필요합니다.";
+ if(q.answers[0].includes("print(")&&!c.includes("print("))return "결과를 화면에 보여주는 부분이 빠진 것 같습니다.";
+ let u=norm(c).split("\n"),a=norm(q.answers[0]).split("\n");
+ if(u.length<a.length)return "전체 방향은 비슷하지만 문제에서 요구하는 처리 단계가 한 줄 이상 빠진 것 같습니다.";
+ return "전체 구조는 가깝습니다. 변수명, 연산자, 메서드 이름, 출력 내용을 문제 조건과 하나씩 비교해보세요.";
+}
+function submit(){
+ let code=id("cmd").value;
+ if(!code.trim())return;
+ let q=questions[current],u=norm(code),ok=q.answers.some(a=>u===norm(a));
+ if(ok){
+   const firstSolve=!solved[current];
+   solved[current]=true;
+   if(firstSolve) recordAttempt(true,q.problemId,!!revealed[current]);
+   id("wrongHintBtn").disabled=true;
+   id("feedback").className="feedback ok";
+   id("feedback").innerHTML="✅ 정답입니다!<br><small>학습 기록에 반영했습니다. 3초 후 다음 문제로 이동합니다.</small>";
+   id("explain").style.display="block";
+   id("explain").innerHTML="<b>📘 해설</b><br>"+q.explain;
+   render();id("doneCount").textContent=count();id("fill").style.width=(count()/20*100)+"%";
+   let idx=current;
+   timer=setTimeout(()=>{if(current!==idx)return;if(idx<19){current=idx+1;load()}else finish()},3000);
+ }else{
+   wrong++;
+   recordAttempt(false,q.problemId,false);
+   lastWrongCode=code;
+   id("wrongHintBtn").disabled=false;
+   id("feedback").className="feedback err";
+   id("feedback").textContent="❌ 아직 아니에요. 오답도 학습 기록에 반영되었습니다. '오답 힌트'로 현재 코드의 의심되는 부분을 확인해보세요.";
+ }
+}
+function finish(){
+ id("mission").textContent="20문제를 모두 완료했습니다.";
+ id("feedback").style.display="none";id("explain").style.display="none";id("finish").style.display="block";
+ let acc=Math.max(0,Math.round(20/Math.max(20,20+wrong)*100));
+ id("finish").innerHTML=`<h2>🎉 STEP ${stage} 완료</h2><div style="font-size:30px;font-weight:900">${acc}%</div><p>오답 시도: ${wrong}회</p><p>정답 확인: ${Object.keys(revealed).length}문제</p><p><a class="back" href="index.html">홈에서 오늘 기록 보기</a> <button onclick="location.reload()">새 랜덤 20문제</button></p>`;
+}
+id("run").onclick=submit;
+id("cmd").addEventListener("keydown",e=>{
+ let ta=id("cmd");
+ if(e.ctrlKey&&e.key==="Enter"){e.preventDefault();submit();return}
+ if(e.key==="Tab"){e.preventDefault();let s=ta.selectionStart,en=ta.selectionEnd;ta.value=ta.value.slice(0,s)+"    "+ta.value.slice(en);ta.selectionStart=ta.selectionEnd=s+4;return}
+ if(e.key==="Enter"){let s=ta.selectionStart,line=ta.value.slice(0,s).split("\n").pop();if(line.trim().endsWith(":")){e.preventDefault();ta.value=ta.value.slice(0,s)+"\n    "+ta.value.slice(ta.selectionEnd);ta.selectionStart=ta.selectionEnd=s+5}}
+});
+id("prev").onclick=()=>{if(timer)clearTimeout(timer);if(current>0){current--;load()}};
+id("next").onclick=()=>{if(timer)clearTimeout(timer);if(current<19){current++;load()}};
+id("hintBtn").onclick=()=>{id("hintBox").textContent="💡 "+questions[current].hint;id("hintBox").style.display="block"};
+id("wrongHintBtn").onclick=()=>{if(lastWrongCode){id("wrongHintBox").innerHTML="<b>🔎 오답 힌트</b><br>"+getWrongHint(questions[current],lastWrongCode);id("wrongHintBox").style.display="block"}};
+id("answerBtn").onclick=()=>{
+ revealed[current]=true;
+ const q=questions[current];
+ const s=loadStats(); const today=ensureToday(s);
+ if(!today.revealedIds.includes(q.problemId)) today.revealedIds.push(q.problemId);
+ saveStats(s);
+ let box=id("answerBox");box.innerHTML="";
+ let pre=document.createElement("pre");pre.className="answerCode";pre.textContent=q.answers[0];
+ box.appendChild(document.createTextNode("✅ 정답 예시:"));box.appendChild(pre);box.style.display="block";
+};
+id("newSetBtn").onclick=()=>location.reload();
+
+(function initStageVisit(){
+ const s=loadStats();s.lastStage=stage;saveStats(s);
+})();
+load();
+</script>
+
+<script>
+const UNIFIED_KEY="codingStudyStatsV2";
+function unifiedDateKey(d=new Date()){
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function getUnifiedLabStats(){
+  let s=null;
+  try{s=JSON.parse(localStorage.getItem(UNIFIED_KEY)||"null")}catch(e){}
+  if(!s){
+    s={languages:{python:{days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:stage},linux:{days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:1},react:{days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:1}},globalDays:{}};
+  }
+  s.languages=s.languages||{};
+  s.languages.python=s.languages.python||{days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:stage};
+  s.globalDays=s.globalDays||{};
+  return s;
+}
+function saveUnifiedLabStats(s){try{localStorage.setItem(UNIFIED_KEY,JSON.stringify(s))}catch(e){}}
+recordAttempt=function(isCorrect,problemId,wasRevealed){
+  const s=getUnifiedLabStats();
+  const ls=s.languages.python;
+  const k=unifiedDateKey();
+  if(!ls.days[k])ls.days[k]={solvedIds:[],revealedIds:[],correct:0,wrong:0,stages:[]};
+  const day=ls.days[k];
+  ls.lastStage=stage;
+  if(!day.stages.includes(stage))day.stages.push(stage);
+  if(isCorrect){
+    ls.correctSubmissions++;
+    day.correct=(day.correct||0)+1;
+    if(!day.solvedIds.includes(problemId))day.solvedIds.push(problemId);
+    if(!ls.totalSolvedIds.includes(problemId))ls.totalSolvedIds.push(problemId);
+    if(wasRevealed&&!day.revealedIds.includes(problemId))day.revealedIds.push(problemId);
+    s.globalDays[k]=true;
+  }else{
+    ls.wrongSubmissions++;
+    day.wrong=(day.wrong||0)+1;
+  }
+  saveUnifiedLabStats(s);
+};
+(function(){const s=getUnifiedLabStats();s.languages.python.lastStage=stage;saveUnifiedLabStats(s)})();
+</script>
+
+
+<div id="tutorOverlay" class="tutorOverlay" onclick="closeTutor()"></div>
+<button id="tutorFab" class="tutorFab" onclick="openTutor()">🤖 AI 튜터</button>
+
+<aside id="tutorPanel" class="tutorPanel">
+  <div class="tutorHeader">
+    <div class="tutorHeaderLeft">
+      <div class="tutorAvatar">🤖</div>
+      <div>
+        <div class="tutorName">코디 튜터</div>
+        <div class="tutorStatus">● 학습 도우미</div>
+      </div>
+    </div>
+    <button class="tutorClose" onclick="closeTutor()">✕</button>
+  </div>
+
+  <div id="tutorContext" class="tutorContext">
+    <b>현재 문제</b><br>
+    문제 정보를 불러오는 중...
+  </div>
+
+  <div id="tutorMessages" class="tutorMessages"></div>
+
+  <div class="tutorQuick">
+    <button class="quickBtn" onclick="quickTutor('wrong')">내 코드 어디가 틀렸어?</button>
+    <button class="quickBtn" onclick="quickTutor('line')">한 줄씩 설명해줘</button>
+    <button class="quickBtn" onclick="quickTutor('easy')">더 쉽게 설명해줘</button>
+    <button class="quickBtn" onclick="quickTutor('example')">비슷한 예시 보여줘</button>
+    <button class="quickBtn" onclick="quickTutor('quiz')">나한테 질문해줘</button>
+  </div>
+
+  <div class="tutorInputWrap">
+    <input id="tutorInput" class="tutorInput" placeholder="이 문제에 대해 궁금한 걸 물어보세요">
+    <button class="tutorSend" onclick="sendTutorMessage()">전송</button>
+  </div>
+</aside>
+
+
+<script>
+let tutorOpenedOnce=false;
+
+function currentQuestionObj(){
+  try{return questions[current]}catch(e){return null}
+}
+function currentUserCode(){
+  const el=document.getElementById("cmd");
+  return el?el.value:"";
+}
+function addTutorMessage(text,who="tutor"){
+  const wrap=document.getElementById("tutorMessages");
+  const row=document.createElement("div");
+  row.className="msg "+(who==="user"?"user":"");
+  const bubble=document.createElement("div");
+  bubble.className=who==="user"?"bubbleUser":"bubbleTutor";
+  bubble.textContent=text;
+  row.appendChild(bubble);
+  wrap.appendChild(row);
+  wrap.scrollTop=wrap.scrollHeight;
+}
+function updateTutorContext(){
+  const q=currentQuestionObj();
+  const ctx=document.getElementById("tutorContext");
+  if(!q){ctx.innerHTML="<b>현재 문제</b><br>문제 정보를 불러올 수 없습니다.";return}
+  ctx.innerHTML="<b>현재 문제</b><br>"+escapeTutorHtml(q.mission);
+}
+function escapeTutorHtml(t){
+  return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function openTutor(){
+  document.getElementById("tutorPanel").classList.add("open");
+  document.getElementById("tutorOverlay").classList.add("show");
+  updateTutorContext();
+
+  if(!tutorOpenedOnce){
+    tutorOpenedOnce=true;
+    addTutorMessage(
+      "안녕하세요. 저는 정답을 바로 던져주기보다, 어디에서 막혔는지 같이 찾아가는 튜터예요.\n\n"+
+      "지금 문제에서 이해가 안 되는 부분이나, 작성한 코드가 왜 틀렸는지 물어보세요."
+    );
+  }
+}
+function closeTutor(){
+  document.getElementById("tutorPanel").classList.remove("open");
+  document.getElementById("tutorOverlay").classList.remove("show");
+}
+function analyzeCodeForTutor(q,code){
+  if(!code.trim()){
+    return "아직 코드가 입력되지 않았어요. 먼저 한 번 직접 작성해볼래요? 완벽하지 않아도 괜찮아요. 작성한 뒤 어떤 줄이 헷갈리는지 같이 볼게요.";
+  }
+
+  const lines=code.replace(/\r\n/g,"\n").split("\n");
+  for(const line of lines){
+    const t=line.trim();
+    if(/^(if|elif)\b/.test(t)&&!t.endsWith(":")){
+      return "조건문 줄의 끝부분을 먼저 살펴보면 좋겠어요.\n\n파이썬에서는 조건 다음에 '이제 아래 블록이 시작된다'는 표시가 필요합니다. 어떤 기호였는지 기억나나요?";
+    }
+    if(/^else\b/.test(t)&&!t.endsWith(":")){
+      return "else 줄의 끝부분을 다시 확인해보세요.\n\nif와 마찬가지로 아래 블록이 시작된다는 표시가 필요해요. 그 기호가 무엇이었는지 떠올려볼까요?";
+    }
+  }
+
+  for(let i=0;i<lines.length-1;i++){
+    const t=lines[i].trim();
+    if((/^(if|elif)\b/.test(t)||/^else\s*:/.test(t))&&t.endsWith(":")){
+      const next=lines[i+1];
+      if(next.trim()&&!/^[ \t]+/.test(next)){
+        return "조건문 다음 줄이 바깥 코드와 같은 위치에서 시작하고 있어요.\n\n파이썬은 '이 코드는 if 안에 있다'는 걸 공백으로 표현합니다. 다음 줄을 조금 안쪽으로 넣어야 하지 않을까요?";
+      }
+    }
+  }
+
+  if(/\bif\b[^\n:]*[^=!<>]=[^=]/.test(code)){
+    return "조건식에서 '='를 사용한 부분을 확인해보세요.\n\n파이썬에서 값 저장과 '두 값이 같은가?' 비교는 서로 다른 기호를 사용합니다. 지금 필요한 건 어느 쪽일까요?";
+  }
+
+  const expected=(q&&q.answers&&q.answers[0])?q.answers[0]:"";
+  if(expected.includes("int(input") && code.includes("input(") && !code.includes("int(")){
+    return "입력은 잘 받고 있어요. 다만 input()으로 받은 값의 자료형을 생각해볼 필요가 있어요.\n\n이 값을 숫자 계산에 사용하려면 어떤 변환이 필요할까요?";
+  }
+  if(expected.includes("else:") && !/\belse\b/.test(code)){
+    return "한쪽 경우는 처리했는데, 조건이 거짓일 때의 경우가 아직 보이지 않아요.\n\n문제에서 '아니면' 또는 '그 외에는' 같은 표현이 있는지 다시 읽어볼까요?";
+  }
+  if(expected.includes("elif") && !/\belif\b/.test(code)){
+    return "조건이 두 가지보다 많은 문제예요.\n\n첫 번째 조건이 아니었을 때 또 다른 조건을 검사하는 문법이 필요합니다. if와 else 사이에 어떤 문법을 사용할 수 있을까요?";
+  }
+  if(expected.includes(" and ") && !/\band\b/.test(code)){
+    return "이 문제는 두 조건이 '동시에' 만족되어야 해요.\n\n두 조건을 모두 참으로 요구하는 논리 연산자가 무엇인지 떠올려보세요.";
+  }
+  if(expected.includes(" or ") && !/\bor\b/.test(code)){
+    return "둘 중 하나만 만족해도 되는 조건이네요.\n\n두 조건 중 하나라도 참이면 되는 논리 연산자를 사용해볼 수 있어요.";
+  }
+  if(expected.includes("return") && !code.includes("return")){
+    return "함수 안에서 계산은 하고 있지만, 그 결과가 함수 밖으로 나오고 있는지 확인해보세요.\n\n함수의 결과를 호출한 곳으로 돌려주는 키워드가 필요합니다.";
+  }
+  if(expected.includes("print(") && !code.includes("print(")){
+    return "계산이나 판단은 하고 있는데, 결과를 화면에 보여주는 부분이 아직 없는 것 같아요.\n\n문제에서 '출력하세요'라고 했다면 마지막에 무엇이 필요할까요?";
+  }
+
+  return "코드의 큰 방향은 꽤 가까워 보여요.\n\n정답과 비교하기 전에 문제를 세 부분으로 나눠볼까요?\n1) 값을 준비하는 부분\n2) 판단하거나 계산하는 부분\n3) 결과를 출력하는 부분\n\n이 셋 중 어떤 부분이 가장 자신 없나요?";
+}
+
+function explainLineByLine(q){
+  if(!q||!q.answers||!q.answers[0]) return "현재 문제의 정답 예시를 불러올 수 없어요.";
+  const lines=q.answers[0].split("\n");
+  const explanations=[];
+
+  lines.forEach((line,i)=>{
+    const t=line.trim();
+    let e="";
+    if(/^def /.test(t)) e="함수를 정의하는 줄이에요. 괄호 안의 값은 함수가 받을 입력입니다.";
+    else if(/^class /.test(t)) e="클래스를 정의하는 줄이에요. 객체의 설계도를 만드는 시작입니다.";
+    else if(/^if /.test(t)) e="조건을 검사하는 줄이에요. 이 조건이 참이면 아래 들여쓰기 블록이 실행됩니다.";
+    else if(/^elif /.test(t)) e="앞 조건이 거짓일 때 추가 조건을 검사합니다.";
+    else if(/^else:/.test(t)) e="앞의 조건들이 모두 거짓일 때 실행되는 블록입니다.";
+    else if(/^for /.test(t)) e="정해진 범위나 데이터에서 값을 하나씩 꺼내 반복합니다.";
+    else if(/^while /.test(t)) e="조건이 참인 동안 계속 반복합니다.";
+    else if(t.includes("input(")) e="사용자에게 값을 입력받는 줄입니다.";
+    else if(t.includes("int(")) e="입력값을 정수로 바꾸는 과정이 포함돼 있어요.";
+    else if(/^return /.test(t)) e="함수의 결과를 호출한 곳으로 돌려주는 줄입니다.";
+    else if(t.includes("print(")) e="지금까지 만든 결과를 화면에 출력합니다.";
+    else if(t.includes("=")) e="오른쪽 값을 계산하거나 준비해서 왼쪽 변수에 저장하는 줄입니다.";
+    else e="앞뒤 코드와 연결되어 문제 해결 과정의 한 단계를 담당합니다.";
+    explanations.push(`${i+1}번째 줄: ${e}`);
+  });
+
+  return "정답 코드를 그대로 외우기보다 역할을 보세요.\n\n"+explanations.join("\n");
+}
+
+function easyExplanation(q){
+  if(!q) return "현재 문제를 불러올 수 없어요.";
+  return "이 문제를 아주 간단하게 보면 이렇게 생각하면 돼요.\n\n"+
+    "① 문제에서 필요한 값을 준비하고\n"+
+    "② 필요한 계산이나 판단을 하고\n"+
+    "③ 마지막에 결과를 보여주는 거예요.\n\n"+
+    "지금 문제에서 먼저 준비해야 하는 값이 무엇인지 찾아볼래요?";
+}
+
+function similarExample(q){
+  const title=(q&&q.title)||"";
+  if(title.includes("if")||title.includes("조건")||title.includes("비교")){
+    return '비슷한 예시를 하나 볼게요.\n\nage = 15\nif age >= 14:\n    print("입장 가능")\n\n이 예시에서 먼저 생각할 건 "어떤 조건을 검사하고 있는가?"예요. 현재 문제도 같은 방식으로 조건을 찾아보세요.';
+  }
+  if(title.includes("반복")||title.includes("for")||title.includes("while")){
+    return '비슷한 예시예요.\n\nfor i in range(3):\n    print(i)\n\n0, 1, 2가 차례대로 출력돼요. 현재 문제에서는 "몇 번 반복해야 하는지"를 먼저 찾아보세요.';
+  }
+  if(title.includes("함수")){
+    return '비슷한 예시예요.\n\ndef double(n):\n    return n * 2\n\n함수는 "입력을 받고 → 처리하고 → 결과를 돌려준다"라고 생각하면 쉬워요.';
+  }
+  return "비슷한 문제를 만들 때는 현재 문제의 숫자나 상황만 바꾸기보다, 같은 개념을 다른 상황에 적용해보는 게 좋아요.\n\n현재 문제에서 쓰는 핵심 개념이 무엇인지 먼저 말해볼래요?";
+}
+
+function tutorQuestion(q){
+  const title=(q&&q.title)||"";
+  if(title.includes("조건")||title.includes("if")||title.includes("비교")){
+    return "그럼 제가 하나 물어볼게요.\n\n현재 문제의 조건이 참일 때와 거짓일 때, 각각 어떤 결과가 나와야 하나요?";
+  }
+  if(title.includes("반복")||title.includes("for")||title.includes("while")){
+    return "이 문제에서 반복은 몇 번 일어나야 하나요? 그리고 반복할 때마다 바뀌는 값은 무엇인가요?";
+  }
+  if(title.includes("함수")){
+    return "이 함수가 받아야 하는 입력은 무엇이고, 마지막에 돌려줘야 하는 결과는 무엇인가요?";
+  }
+  return "이 문제를 '입력 → 처리 → 출력' 세 부분으로 나눈다면, 각각 무엇인지 한번 말해볼래요?";
+}
+
+function quickTutor(type){
+  const q=currentQuestionObj();
+  const code=currentUserCode();
+
+  const labels={
+    wrong:"내 코드 어디가 틀렸어?",
+    line:"한 줄씩 설명해줘",
+    easy:"더 쉽게 설명해줘",
+    example:"비슷한 예시 보여줘",
+    quiz:"나한테 질문해줘"
+  };
+  addTutorMessage(labels[type]||"도와줘","user");
+
+  let response="";
+  if(type==="wrong") response=analyzeCodeForTutor(q,code);
+  else if(type==="line") response=explainLineByLine(q);
+  else if(type==="easy") response=easyExplanation(q);
+  else if(type==="example") response=similarExample(q);
+  else if(type==="quiz") response=tutorQuestion(q);
+
+  setTimeout(()=>addTutorMessage(response),220);
+  recordTutorUsage();
+}
+
+function sendTutorMessage(){
+  const input=document.getElementById("tutorInput");
+  const text=input.value.trim();
+  if(!text) return;
+  addTutorMessage(text,"user");
+  input.value="";
+
+  const q=currentQuestionObj();
+  const code=currentUserCode();
+  let response="";
+
+  if(/틀|오답|왜 안|에러|오류/.test(text)) response=analyzeCodeForTutor(q,code);
+  else if(/한.?줄|줄마다|설명/.test(text)) response=explainLineByLine(q);
+  else if(/쉽게|초등|간단/.test(text)) response=easyExplanation(q);
+  else if(/예시|비슷/.test(text)) response=similarExample(q);
+  else if(/질문|퀴즈|물어/.test(text)) response=tutorQuestion(q);
+  else if(/정답/.test(text)){
+    response="정답을 바로 보여주기보다 먼저 어디에서 막혔는지 찾는 게 좋아요.\n\n현재 작성한 코드에서 가장 헷갈리는 줄이 몇 번째 줄인가요? 그 줄부터 같이 볼게요.";
+  } else {
+    response="좋아요. 현재 문제를 기준으로 같이 생각해볼게요.\n\n먼저 이 문제에서 반드시 해야 하는 일을 한 문장으로 말해볼래요? 그 다음 필요한 코드 구조를 같이 찾아보죠.";
+  }
+
+  setTimeout(()=>addTutorMessage(response),240);
+  recordTutorUsage();
+}
+document.getElementById("tutorInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){e.preventDefault();sendTutorMessage();}
+});
+
+function recordTutorUsage(){
+  try{
+    const key="codingStudyStatsV2";
+    const s=JSON.parse(localStorage.getItem(key)||"null");
+    if(!s||!s.languages||!s.languages.python) return;
+    const lang=s.languages.python;
+    lang.tutorUses=(lang.tutorUses||0)+1;
+    const d=new Date();
+    const dk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    if(!lang.days[dk]) lang.days[dk]={solvedIds:[],revealedIds:[],correct:0,wrong:0,stages:[]};
+    lang.days[dk].tutorUses=(lang.days[dk].tutorUses||0)+1;
+    localStorage.setItem(key,JSON.stringify(s));
+  }catch(e){}
+}
+
+// keep tutor context synchronized when the learner changes questions
+const originalLoadForTutor=typeof load==="function"?load:null;
+if(originalLoadForTutor){
+  load=function(){
+    originalLoadForTutor();
+    updateTutorContext();
+  }
+}
+</script>
+
+
+<script src="boss-data.js"></script>
+<script src="boss-economy.js"></script>
+<script>
+(function(){
+  const BOSS_LANG="python";
+  const stageBoss=(window.BOSS_DATA[BOSS_LANG]||{})[stage];
+  let bossAnswerRevealed=false;
+
+  function bossNormalize(code){
+    if(typeof norm==="function"){
+      try{return norm(code)}catch(e){}
+    }
+    return String(code).replace(/\r\n/g,"\n").trim().split("\n").map(s=>s.trim()).filter(Boolean).join("\n").replace(/[ \t]+/g," ");
+  }
+
+  function bossUI(){
+    if(!stageBoss)return '<p>보스 데이터를 불러올 수 없습니다.</p>';
+    const cleared=BossEconomy.isCleared(BOSS_LANG,stage);
+    return `
+      <div class="bossArena">
+        <div class="bossHead">
+          <img src="boss-clear.png" alt="보스">
+          <div>
+            <div class="bossKicker">STAGE BOSS</div>
+            <h2>${stageBoss.title}</h2>
+            ${cleared?'<div class="bossAlready">👑 이미 클리어한 보스 · 재도전 가능</div>':''}
+          </div>
+        </div>
+        <div class="bossMission">${stageBoss.mission}</div>
+        <textarea id="bossCmd" class="bossInput" placeholder="보스 문제의 답을 입력하세요"></textarea>
+        <div class="bossActions">
+          <button class="bossBtn" onclick="submitStageBoss()">⚔ 보스에게 도전</button>
+          <button class="bossSubBtn" onclick="showBossHint()">💡 보스 힌트</button>
+          <button class="bossSubBtn" onclick="showBossAnswer()">👀 정답 보기</button>
+        </div>
+        <div id="bossMessage" class="bossMessage"></div>
+      </div>`;
+  }
+
+  window.showStageBoss=function(){
+    const box=id("finish");
+    box.style.display="block";
+    box.innerHTML=`
+      <h2>🎉 랜덤 20문제 완료!</h2>
+      <p>이제 이 STEP의 마지막 관문이 열렸습니다.</p>
+      ${bossUI()}
+    `;
+    id("mission").textContent="🔥 BOSS STAGE가 등장했습니다!";
+    if(id("feedback"))id("feedback").style.display="none";
+    if(id("explain"))id("explain").style.display="none";
+  };
+
+  window.submitStageBoss=function(){
+    if(!stageBoss)return;
+    const input=document.getElementById("bossCmd");
+    const msg=document.getElementById("bossMessage");
+    const ok=bossNormalize(input.value)===bossNormalize(stageBoss.answer);
+    if(!ok){
+      msg.className="bossMessage err";
+      msg.innerHTML="❌ 아직 보스를 쓰러뜨리지 못했습니다.<br>문제의 조건과 코드/명령 구조를 다시 확인해보세요.";
+      return;
+    }
+
+    const award=BossEconomy.award(BOSS_LANG,stage);
+    msg.className="bossMessage ok";
+    if(award.first){
+      msg.innerHTML=`✅ <b>BOSS CLEAR!</b><br>${stageBoss.explain}<div class="medalAward">🏅 메달 1개 획득!</div><div>현재 수집 메달 ${award.total}/42 · 사용 가능 ${award.balance}개</div><p><a class="back" href="${BOSS_LANG}-stages.html">단계 선택에서 클리어 증표 보기 →</a></p>`;
+    }else{
+      msg.innerHTML=`✅ <b>보스 재클리어!</b><br>${stageBoss.explain}<div>이 단계의 메달은 이미 획득했습니다.</div><p><a class="back" href="${BOSS_LANG}-stages.html">클리어 증표 보기 →</a></p>`;
+    }
+  };
+
+  window.showBossHint=function(){
+    const msg=document.getElementById("bossMessage");
+    msg.className="bossMessage err";
+    msg.innerHTML="💡 "+stageBoss.hint;
+  };
+
+  window.showBossAnswer=function(){
+    bossAnswerRevealed=true;
+    const msg=document.getElementById("bossMessage");
+    msg.className="bossMessage err";
+    msg.innerHTML="<b>보스 정답 예시</b><pre style='white-space:pre-wrap;background:#111827;color:white;padding:12px;border-radius:9px'>"+stageBoss.answer.replace(/</g,"&lt;").replace(/>/g,"&gt;")+"</pre>";
+  };
+
+  // Override the original completion screen.
+  window.finish=function(){
+    showStageBoss();
+  };
+})();
+</script>
+
+
+<script>
+(function enableSmartIndent(){
+  const editor = document.getElementById("cmd");
+  if (!editor || editor.dataset.smartIndent === "on") return;
+  editor.dataset.smartIndent = "on";
+
+  const INDENT = "    ";
+
+  function lineInfo(pos){
+    const value = editor.value;
+    const start = value.lastIndexOf("\n", Math.max(0, pos - 1)) + 1;
+    const endIndex = value.indexOf("\n", pos);
+    const end = endIndex === -1 ? value.length : endIndex;
+    return { value, start, end, line: value.slice(start, end) };
+  }
+
+  function replaceSelection(text, start, end, caretOffset=text.length){
+    const value = editor.value;
+    editor.value = value.slice(0, start) + text + value.slice(end);
+    const caret = start + caretOffset;
+    editor.selectionStart = editor.selectionEnd = caret;
+  }
+
+  editor.addEventListener("keydown", function(e){
+    // Ctrl+Enter remains "submit"
+    if (e.ctrlKey && e.key === "Enter") return;
+
+    // TAB = four spaces
+    if (e.key === "Tab" && !e.shiftKey){
+      e.preventDefault();
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+
+      if (start === end){
+        replaceSelection(INDENT, start, end);
+      } else {
+        // Indent all selected lines.
+        const value = editor.value;
+        const blockStart = value.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+        const selected = value.slice(blockStart, end);
+        const indented = selected.split("\n").map(line => INDENT + line).join("\n");
+        editor.value = value.slice(0, blockStart) + indented + value.slice(end);
+        editor.selectionStart = start + INDENT.length;
+        editor.selectionEnd = end + INDENT.length * selected.split("\n").length;
+      }
+      return;
+    }
+
+    // SHIFT+TAB = outdent
+    if (e.key === "Tab" && e.shiftKey){
+      e.preventDefault();
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const value = editor.value;
+      const blockStart = value.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+      const selected = value.slice(blockStart, end);
+      const lines = selected.split("\n");
+
+      let removedBeforeStart = 0;
+      let removedTotal = 0;
+      const outdented = lines.map((line, idx) => {
+        const m = line.match(/^( {1,4}|\t)/);
+        if (!m) return line;
+        const n = m[0].length;
+        removedTotal += n;
+        if (idx === 0) removedBeforeStart = n;
+        return line.slice(n);
+      }).join("\n");
+
+      editor.value = value.slice(0, blockStart) + outdented + value.slice(end);
+      editor.selectionStart = Math.max(blockStart, start - removedBeforeStart);
+      editor.selectionEnd = Math.max(editor.selectionStart, end - removedTotal);
+      return;
+    }
+
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const info = lineInfo(start);
+
+    const beforeCaret = info.value.slice(info.start, start);
+    const currentIndent = (beforeCaret.match(/^[ \t]*/) || [""])[0];
+    const trimmed = beforeCaret.trimEnd();
+
+    let extraIndent = "";
+
+    // Python block starters.
+    if (trimmed.endsWith(":")) {
+      extraIndent = INDENT;
+    }
+
+    // JavaScript / JSX / CSS / Bash function blocks.
+    if (trimmed.endsWith("{")) {
+      extraIndent = INDENT;
+    }
+
+    // Bash control-flow block starters.
+    if (/\b(then|do)\s*$/.test(trimmed)) {
+      extraIndent = INDENT;
+    }
+
+    // React/JS multiline arrow/function patterns ending with =>
+    // are not indented unless they also open a brace.
+    const newIndent = currentIndent + extraIndent;
+    replaceSelection("\n" + newIndent, start, end);
+
+    // Keep the newly indented area visible.
+    editor.scrollTop = editor.scrollHeight;
+  }, true);
+})();
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
+<script>
+let __pyodidePromise=null;
+function getPyodideForStudy(){
+  if(!window.loadPyodide)return null;
+  if(!__pyodidePromise)__pyodidePromise=loadPyodide();
+  return __pyodidePromise;
+}
+function canRuntimeCompare(code){
+  const bad=/\b(open|requests|pathlib|random|datetime|time|os|subprocess|socket|exec|eval)\b|__|while\s/;
+  return !bad.test(code);
+}
+async function runPythonObserved(py,code,inputs){
+  const wrapper=`
+import io, sys, builtins
+_inputs=${JSON.stringify(inputs)}
+_iter=iter(_inputs)
+_old_input=builtins.input
+_old_stdout=sys.stdout
+_buf=io.StringIO()
+def _study_input(prompt=""):
+    try:
+        return next(_iter)
+    except StopIteration:
+        return ""
+builtins.input=_study_input
+sys.stdout=_buf
+_result={"ok":True,"out":"","err":""}
+try:
+    exec(${JSON.stringify(code)}, {})
+    _result["out"]=_buf.getvalue()
+except Exception as e:
+    _result={"ok":False,"out":_buf.getvalue(),"err":type(e).__name__}
+finally:
+    builtins.input=_old_input
+    sys.stdout=_old_stdout
+_result
+`;
+  const r=py.runPython(wrapper);
+  const js=r.toJs ? r.toJs({dict_converter:Object.fromEntries}) : r;
+  try{r.destroy&&r.destroy()}catch(e){}
+  return js;
+}
+async function pythonSameBehavior(question,userCode){
+  const ref=(question.answers||[])[0]||"";
+  if(!ref || !canRuntimeCompare(ref) || !canRuntimeCompare(userCode))return null;
+
+  let py;
+  try{
+    const p=getPyodideForStudy();
+    if(!p)return null;
+    py=await p;
+  }catch(e){return null}
+
+  const tests=[
+    ["2","3","4","5"],
+    ["7","8","9","10"],
+    ["20","150","5","2"],
+    ["-3","0","1","6"],
+    ["85","90","70","60"]
+  ];
+  let valid=0;
+  for(const inputs of tests){
+    let a,b;
+    try{
+      a=await runPythonObserved(py,ref,inputs);
+      if(!a.ok)continue;
+      b=await runPythonObserved(py,userCode,inputs);
+    }catch(e){return null}
+    valid++;
+    if(!b.ok || String(a.out)!==String(b.out))return false;
+  }
+  return valid>=2 ? true : null;
+}
+</script>
+
+
+<script>
+(function(){
+  if(typeof submit!=="function")return;
+  const originalSubmit=submit;
+
+  async function semanticSubmit(){
+    const q=questions[current];
+    const code=id("cmd").value;
+    if(!code.trim())return;
+
+    let semantic=null;
+    try{semantic=await pythonSameBehavior(q,code)}catch(e){semantic=null}
+
+    if(semantic===true){
+      // Temporarily register the learner's implementation as an accepted answer.
+      // The original submit function then performs all normal progress/stat updates.
+      q.answers.push(code);
+      try{originalSubmit()}finally{q.answers.pop()}
+      return;
+    }
+    // semantic=false means outputs differ; null means runtime comparison was not suitable.
+    // In both cases the reviewed structural/alternate-answer checker gets the final say.
+    originalSubmit();
+  }
+
+  const run=id("run");
+  if(run)run.onclick=semanticSubmit;
+
+  const editor=id("cmd");
+  if(editor){
+    editor.addEventListener("keydown",e=>{
+      if(e.ctrlKey&&e.key==="Enter"){
+        e.preventDefault();
+        semanticSubmit();
+      }
+    },true);
+  }
+})();
+</script>
+
+</body></html>

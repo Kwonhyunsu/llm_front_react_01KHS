@@ -1,0 +1,166 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Python 로드맵</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --card:#fff;
+  --line:#dfe5ee;
+  --text:#10213f;
+  --muted:#667085;
+  --blue:#3565e8;
+  --blue2:#5b7cff;
+  --blue-soft:#eef4ff;
+  --dark:#151d31;
+  --green:#19a974;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#f7f9fc;
+  font-family:Inter,Arial,"Malgun Gothic",sans-serif;
+  color:var(--text);
+}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+.topbar{
+  height:76px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 7vw;position:sticky;top:0;z-index:30
+}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:21px}
+.brandLogo{
+  width:34px;height:34px;border:2px solid var(--blue);border-radius:9px;
+  display:grid;place-items:center;color:var(--blue);font-weight:900
+}
+.nav{display:flex;align-items:center;gap:30px}
+.nav a{font-weight:800;font-size:14px;color:#27344f;padding:28px 0 20px;position:relative}
+.nav a.active{color:var(--blue)}
+.nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:10px;height:3px;background:var(--blue);border-radius:99px}
+.profileBtn{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:white;cursor:pointer;font-size:16px}
+.container{width:min(1280px,92vw);margin:0 auto}
+.btnPrimary,.btnOutline,.btnDark{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 20px;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer
+}
+.btnPrimary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;border:0;box-shadow:0 8px 20px rgba(53,101,232,.25)}
+.btnOutline{background:white;color:var(--blue);border:1.5px solid var(--blue)}
+.btnDark{background:#273653;color:white;border:0}
+.footer{
+  border-top:1px solid var(--line);background:white;margin-top:30px;
+  padding:28px 0;color:#74809a;font-size:13px
+}
+.footerRow{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+.toast{
+  position:fixed;right:28px;bottom:28px;background:#111827;color:white;
+  padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.2);
+  display:none;z-index:99;font-size:14px
+}
+@media(max-width:900px){
+  .nav{display:none}.topbar{padding:0 20px}.container{width:min(94vw,1280px)}
+}
+
+.heroMini{background:linear-gradient(180deg,#fbfdff,#eef4ff);border-bottom:1px solid var(--line);padding:42px 0}.heroMini h1{font-size:40px;margin:0 0 10px}.heroMini p{margin:0;color:var(--muted)}
+.stageGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding:34px 0 60px}.stageCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;transition:.18s}.stageCard:hover{transform:translateY(-3px);border-color:#98b2ff;box-shadow:0 12px 28px rgba(38,65,117,.08)}.stageNo{font-size:11px;font-weight:900;color:var(--blue)}.stageCard h3{font-size:21px;margin:6px 0}.stageCard p{margin:0;color:var(--muted);font-size:13px}.chips{display:flex;gap:7px;margin-top:14px}.chips span{font-size:11px;background:#f1f5f9;padding:6px 8px;border-radius:999px;font-weight:800}.start{margin-top:15px;color:var(--blue);font-weight:900}
+@media(max-width:760px){.stageGrid{grid-template-columns:1fr}}
+</style></head><body>
+<header class="topbar"><a class="brand" href="index.html"><span class="brandLogo">◇</span><span>코딩 학습실</span></a><nav class="nav"><a href="index.html">홈</a><a href="python-stages.html">Python</a><a href="linux.html">Linux</a><a href="react.html">React</a><a class="active" href="roadmap.html">로드맵</a></nav><button class="profileBtn" onclick="history.back()">←</button></header>
+<section class="heroMini"><div class="container"><h1>Python 학습 로드맵</h1><p>14단계를 순서대로 학습하거나, 원하는 단계를 바로 선택할 수 있습니다.</p></div></section>
+<main class="container"><div class="stageGrid">
+<a class="stageCard" href="python-lab.html?stage=1">
+  <div class="stageNo">STEP 1</div>
+  <h3>출력과 변수</h3>
+  <p>print · 문자열 · 숫자 · 변수 · input · 형변환</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=2">
+  <div class="stageNo">STEP 2</div>
+  <h3>조건문</h3>
+  <p>비교 연산자 · if · elif · else · 논리 연산자</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=3">
+  <div class="stageNo">STEP 3</div>
+  <h3>반복문</h3>
+  <p>for · while · range · break · continue</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=4">
+  <div class="stageNo">STEP 4</div>
+  <h3>리스트와 문자열</h3>
+  <p>list · 인덱싱 · 슬라이싱 · 문자열 메서드</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=5">
+  <div class="stageNo">STEP 5</div>
+  <h3>딕셔너리와 자료구조</h3>
+  <p>dict · tuple · set</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=6">
+  <div class="stageNo">STEP 6</div>
+  <h3>함수</h3>
+  <p>def · 매개변수 · return</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=7">
+  <div class="stageNo">STEP 7</div>
+  <h3>파일 처리</h3>
+  <p>txt · CSV · JSON · 파일 읽기/쓰기</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=8">
+  <div class="stageNo">STEP 8</div>
+  <h3>예외 처리와 디버깅</h3>
+  <p>try · except · 오류 분석</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=9">
+  <div class="stageNo">STEP 9</div>
+  <h3>모듈과 라이브러리</h3>
+  <p>import · random · datetime · pathlib</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=10">
+  <div class="stageNo">STEP 10</div>
+  <h3>객체지향</h3>
+  <p>class · 객체 · 속성 · 메서드</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=11">
+  <div class="stageNo">STEP 11</div>
+  <h3>자동화</h3>
+  <p>파일 정리 · 반복 작업 · 데이터 자동 처리</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=12">
+  <div class="stageNo">STEP 12</div>
+  <h3>API와 외부 데이터</h3>
+  <p>requests · JSON · 외부 데이터</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=13">
+  <div class="stageNo">STEP 13</div>
+  <h3>프로젝트 설계</h3>
+  <p>요구사항 · 기능 분해 · 구조 설계</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a>
+<a class="stageCard" href="python-lab.html?stage=14">
+  <div class="stageNo">STEP 14</div>
+  <h3>실전 프로젝트</h3>
+  <p>직접 프로그램 설계 · 구현 · 완성</p>
+  <div class="chips"><span>문제은행 100</span><span>랜덤 20</span></div>
+  <div class="start">학습 시작 →</div>
+</a></div></main>
+</body></html>

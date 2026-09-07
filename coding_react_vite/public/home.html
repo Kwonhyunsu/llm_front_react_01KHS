@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>코딩 학습실</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --card:#fff;
+  --line:#dfe5ee;
+  --text:#10213f;
+  --muted:#667085;
+  --blue:#3565e8;
+  --blue2:#5b7cff;
+  --blue-soft:#eef4ff;
+  --dark:#151d31;
+  --green:#19a974;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#f7f9fc;
+  font-family:Inter,Arial,"Malgun Gothic",sans-serif;
+  color:var(--text);
+}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+.topbar{
+  height:76px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 7vw;position:sticky;top:0;z-index:30
+}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:21px}
+.brandLogo{
+  width:34px;height:34px;border:2px solid var(--blue);border-radius:9px;
+  display:grid;place-items:center;color:var(--blue);font-weight:900
+}
+.nav{display:flex;align-items:center;gap:30px}
+.nav a{font-weight:800;font-size:14px;color:#27344f;padding:28px 0 20px;position:relative}
+.nav a.active{color:var(--blue)}
+.nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:10px;height:3px;background:var(--blue);border-radius:99px}
+.profileBtn{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:white;cursor:pointer;font-size:16px}
+.container{width:min(1280px,92vw);margin:0 auto}
+.btnPrimary,.btnOutline,.btnDark{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 20px;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer
+}
+.btnPrimary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;border:0;box-shadow:0 8px 20px rgba(53,101,232,.25)}
+.btnOutline{background:white;color:var(--blue);border:1.5px solid var(--blue)}
+.btnDark{background:#273653;color:white;border:0}
+.footer{
+  border-top:1px solid var(--line);background:white;margin-top:30px;
+  padding:28px 0;color:#74809a;font-size:13px
+}
+.footerRow{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+.toast{
+  position:fixed;right:28px;bottom:28px;background:#111827;color:white;
+  padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.2);
+  display:none;z-index:99;font-size:14px
+}
+@media(max-width:900px){
+  .nav{display:none}.topbar{padding:0 20px}.container{width:min(94vw,1280px)}
+}
+
+.heroWrap{background:
+radial-gradient(circle at 75% 25%,rgba(79,114,255,.12),transparent 26%),
+radial-gradient(circle at 10% 80%,rgba(100,149,237,.13),transparent 26%),
+linear-gradient(180deg,#fbfdff 0%,#edf4ff 100%);
+border-bottom:1px solid #e6ebf2}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:40px 0 32px}
+.hero h1{font-size:52px;line-height:1.15;letter-spacing:-1.8px;margin:0 0 18px}
+.hero p{font-size:17px;color:var(--muted);line-height:1.75;margin:0 0 26px}
+.heroActions{display:flex;gap:12px;flex-wrap:wrap}
+.dashboard{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+.editor{background:#20283c;border-radius:14px;padding:16px;box-shadow:0 18px 34px rgba(18,28,48,.18);min-height:280px;color:#e6edf7;font-family:Consolas,monospace}
+.editorTop{display:flex;justify-content:space-between;color:#9aa7bc;font-size:12px;margin-bottom:14px}
+.codeLine{line-height:1.7;font-size:13px;white-space:pre}
+.result{margin-top:14px;border-top:1px solid #3a465f;padding-top:12px;color:#b6c2d6;font-size:12px}
+.result strong{color:#5fffb0}
+.stats{display:grid;gap:12px}
+.statCard{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 10px 24px rgba(31,48,78,.08)}
+.statTitle{font-size:13px;font-weight:900;margin-bottom:8px}
+.progressCircle{width:70px;height:70px;border-radius:50%;background:conic-gradient(var(--blue) 0 var(--progress,0%),#e7edf8 var(--progress,0%));display:grid;place-items:center;margin-right:14px}
+.progressCircle:after{content:attr(data-label);width:52px;height:52px;border-radius:50%;background:white;display:grid;place-items:center;font-weight:900}
+.statFlex{display:flex;align-items:center}
+.miniStats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.challenge{background:linear-gradient(135deg,#2b3858,#31456c);color:white;border-radius:14px;padding:16px}
+.challengeBtn{float:right;background:#4c6ff5;color:white;border:0;padding:9px 12px;border-radius:8px;font-weight:800;cursor:pointer}
+.courseSec{padding:20px 0 10px}
+.courseGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.courseCard{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;gap:15px;align-items:flex-start;cursor:pointer;transition:.2s}
+.courseCard:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(23,41,79,.08);border-color:#9db6ff}
+.courseCard.active{border:2px solid #4b78ff}
+.courseIcon{width:58px;height:58px;border-radius:14px;background:#eff5ff;display:grid;place-items:center;font-size:32px;flex:none}
+.courseBody{flex:1}.courseBody h3{margin:0 0 5px;font-size:18px}.courseBody p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.tag{font-size:11px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;color:#63708b}
+.roadSec{padding:10px 0 14px}
+.sectionHead{display:flex;justify-content:space-between;align-items:end;margin-bottom:12px}.sectionHead h2{margin:0 0 4px;font-size:22px}.sectionHead p{margin:0;color:var(--muted);font-size:13px}
+.roadGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.roadCard{background:white;border:1px solid var(--line);border-radius:12px;padding:15px;cursor:pointer;transition:.2s;min-height:112px}
+.roadCard:hover{border-color:#89a8ff;transform:translateY(-2px)}.step{font-size:11px;font-weight:900;color:var(--blue)}.roadCard h4{margin:5px 0;font-size:14px}.roadCard p{margin:0;font-size:11px;line-height:1.4;color:var(--muted)}
+.infoBar{margin-top:22px;background:white;border:1px solid var(--line);border-radius:14px;display:grid;grid-template-columns:repeat(4,1fr);padding:20px 10px}
+.infoItem{display:flex;gap:12px;justify-content:center;align-items:center;border-right:1px solid var(--line)}.infoItem:last-child{border-right:0}.infoIcon{font-size:25px}.infoItem b{display:block;font-size:15px}.infoItem span{font-size:11px;color:var(--muted)}
+@media(max-width:1000px){.hero{grid-template-columns:1fr}.courseGrid{grid-template-columns:1fr}.roadGrid{grid-template-columns:repeat(2,1fr)}.infoBar{grid-template-columns:1fr 1fr;gap:20px}.infoItem{border-right:0}}
+
+.courseStart{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-top:12px;padding:7px 10px;border-radius:8px;
+  background:#eef4ff;color:#3565e8;font-size:11px;font-weight:900;
+  border:1px solid #cfdbff;cursor:pointer
+}
+.courseStart:hover{background:#dfe9ff}
+
+
+.courseCard{position:relative}
+.courseStart{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-top:12px;padding:7px 11px;border-radius:8px;
+  background:#eef4ff;color:#3565e8;font-size:11px;font-weight:900;
+  border:1px solid #cfdbff;cursor:pointer
+}
+.courseStart:hover{background:#dfe9ff}
+.courseCard.selected{
+  border:2px solid #4b78ff;
+  box-shadow:0 12px 28px rgba(53,101,232,.10)
+}
+.roadCard{cursor:default}
+.roadCard.clickable{cursor:pointer}
+.roadCard.clickable:hover{border-color:#89a8ff;transform:translateY(-2px)}
+.langPill{
+  display:inline-block;
+  font-size:11px;
+  font-weight:900;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#eef4ff;
+  color:#3565e8;
+  margin-bottom:8px
+}
+
+
+.tmiCard{
+  min-height:280px;
+  border-radius:18px;
+  padding:25px;
+  background:
+    radial-gradient(circle at 85% 15%,rgba(91,124,255,.18),transparent 28%),
+    linear-gradient(145deg,#f7faff 0%,#eaf1ff 100%);
+  border:1px solid #cfdcff;
+  box-shadow:0 18px 34px rgba(62,91,150,.12);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.tmiTop{display:flex;align-items:center;justify-content:space-between}
+.tmiBadge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:white;border:1px solid #d8e2ff;color:#3565e8;
+  font-size:11px;font-weight:900;padding:7px 10px;border-radius:999px
+}
+.tmiLang{font-size:12px;font-weight:900;color:#6b7fa8}
+.tmiEmoji{font-size:40px;margin:17px 0 8px}
+.tmiTitle{font-size:23px;font-weight:950;line-height:1.35;margin:0 0 10px}
+.tmiText{font-size:14px;color:#52627e;line-height:1.75;margin:0}
+.tmiBottom{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:20px;padding-top:16px;border-top:1px solid #d8e2f5
+}
+.tmiSmall{font-size:11px;color:#7a89a6}
+.tmiNext{
+  border:0;background:white;color:#3565e8;font-weight:900;
+  border-radius:9px;padding:8px 11px;cursor:pointer
+}
+.statLanguage{
+  display:inline-block;margin-left:5px;
+  font-size:10px;font-weight:900;padding:3px 6px;
+  border-radius:999px;background:#eef4ff;color:#3565e8
+}
+.globalStreakNote{
+  margin-top:4px;font-size:10px;color:#667085;line-height:1.35
+}
+
+
+.navDropdown{
+  position:relative;
+  display:flex;
+  align-items:center;
+  height:76px;
+}
+.navDropBtn,.navNoticeBtn{
+  appearance:none;
+  border:0;
+  background:transparent;
+  color:#27344f;
+  font-weight:800;
+  font-size:14px;
+  font-family:inherit;
+  cursor:pointer;
+  padding:28px 0 20px;
+}
+.navDropdown:hover .navDropBtn,
+.navNoticeBtn:hover{
+  color:var(--blue);
+}
+.navDropMenu{
+  display:none;
+  position:absolute;
+  top:60px;
+  left:50%;
+  transform:translateX(-50%);
+  width:175px;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:7px;
+  box-shadow:0 16px 34px rgba(28,45,77,.14);
+  z-index:100;
+}
+.navDropdown:hover .navDropMenu{
+  display:block;
+}
+.navDropMenu::before{
+  content:"";
+  position:absolute;
+  top:-12px;
+  left:0;
+  right:0;
+  height:14px;
+}
+.navDropMenu button{
+  display:block;
+  width:100%;
+  text-align:left;
+  border:0;
+  background:white;
+  color:#27344f;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:800;
+  padding:10px 11px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.navDropMenu button:hover{
+  background:#eef4ff;
+  color:var(--blue);
+}
+.infoModalOverlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(15,23,42,.35);
+  padding:24px;
+  align-items:center;
+  justify-content:center;
+}
+.infoModalOverlay.show{
+  display:flex;
+}
+.infoModal{
+  width:min(620px,94vw);
+  max-height:82vh;
+  overflow:auto;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 24px 70px rgba(15,23,42,.22);
+}
+.infoModalHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:19px 22px;
+  border-bottom:1px solid var(--line);
+}
+.infoModalHead h2{
+  margin:0;
+  font-size:22px;
+}
+.infoModalClose{
+  border:0;
+  background:#f1f5f9;
+  border-radius:9px;
+  width:34px;
+  height:34px;
+  cursor:pointer;
+  font-size:16px;
+}
+.infoModalBody{
+  padding:22px;
+  color:#475569;
+  line-height:1.8;
+  font-size:15px;
+}
+.infoModalBody h3{
+  color:#172033;
+  margin:21px 0 7px;
+  font-size:17px;
+}
+.infoModalBody h3:first-child{
+  margin-top:0;
+}
+.infoModalBody ul{
+  padding-left:20px;
+}
+.reasonMessage{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:180px;
+  text-align:center;
+  font-size:30px;
+  font-weight:950;
+  color:#172033;
+}
+.noticeEmpty{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:30px 18px;
+  text-align:center;
+  color:#64748b;
+}
+@media(max-width:900px){
+  .navDropdown,.navNoticeBtn{display:none}
+}
+
+
+.navShopLink{font-weight:800;font-size:14px;color:#27344f;padding:28px 0 20px}.navShopLink:hover{color:var(--blue)}
+.bossMedalSection{width:min(1280px,92vw);margin:18px auto 0;background:linear-gradient(135deg,#fff7ed,#fff);border:1px solid #fed7aa;border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 10px 24px rgba(180,83,9,.06)}
+.medalLeft{display:flex;align-items:center;gap:14px}.medalIcon{width:55px;height:55px;object-fit:contain}.medalTitle{font-size:15px;font-weight:950}.medalNumbers{font-size:12px;color:#64748b;margin-top:4px}.medalBig{font-size:25px;font-weight:950;color:#b45309}.shopBtn{display:inline-flex;align-items:center;justify-content:center;background:#b45309;color:white;border-radius:10px;padding:11px 15px;font-weight:900;text-decoration:none}
+@media(max-width:700px){.bossMedalSection{align-items:flex-start;flex-direction:column}}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brandLogo">◇</span><span>코딩 학습실</span></a>
+  
+<nav class="nav">
+  <a class="active" href="index.html">홈</a>
+
+  <div class="navDropdown">
+    <button class="navDropBtn">개요</button>
+    <div class="navDropMenu">
+      <button onclick="openInfoModal('coding')">코딩이란</button>
+      <button onclick="openInfoModal('reason')">사이트 개설 이유</button>
+    </div>
+  </div>
+
+  <a class="navShopLink" href="react-roadmap.html">React</a>
+  <button class="navNoticeBtn" onclick="openInfoModal('notice')">공지사항</button><a class="navShopLink" href="shop.html">상점</a>
+</nav>
+
+  <button class="profileBtn" onclick="showToast('프로필 기능은 다음 단계에서 학습 기록과 연결할 수 있어요.')">♙</button>
+</header>
+
+<section class="heroWrap">
+<div class="container hero">
+  <div>
+    <h1>직접 코딩하며<br>단계별로 성장하세요</h1>
+    <p>실습 중심의 문제 풀이, 맞춤형 힌트, 매일 바뀌는 도전 문제로<br>즐겁게 실력을 키워보세요.</p>
+    <div class="heroActions">
+      <a class="btnPrimary" href="python-roadmap.html">🐍 Python 실습실 시작 →</a>
+      <a class="btnOutline" href="roadmap.html">▣ 학습 단계 보기</a>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <div id="tmiCard" class="tmiCard">
+      <div>
+        <div class="tmiTop">
+          <span class="tmiBadge">✨ 오늘의 TMI</span>
+          <span id="tmiLang" class="tmiLang">PYTHON</span>
+        </div>
+        <div id="tmiEmoji" class="tmiEmoji">🐍</div>
+        <h2 id="tmiTitle" class="tmiTitle">Python이라는 이름은 뱀에서 온 게 아니에요.</h2>
+        <p id="tmiText" class="tmiText">개발자 귀도 반 로섬이 좋아하던 영국 코미디 프로그램 ‘Monty Python’에서 이름을 가져왔어요.</p>
+      </div>
+      <div class="tmiBottom">
+        <span class="tmiSmall">공부하다 한 번씩 읽는 개발 잡학</span>
+        <button class="tmiNext" onclick="nextTmi()">다른 TMI →</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="statCard">
+        <div class="statTitle">오늘의 진행률 <span id="progressLang" class="statLanguage">Python</span></div>
+        <div class="statFlex"><div id="todayCircle" class="progressCircle" data-label="0%"></div><div><b id="todaySolved">0 / 20 문제</b><br><span id="todayStatus" style="font-size:11px;color:#667085">오늘 학습을 시작해보세요</span></div></div>
+      </div>
+      <div class="miniStats">
+        <div class="statCard"><div class="statTitle">🔥 연속 학습</div><b id="streakDays" style="font-size:20px">0일</b><br><span id="bestStreak" style="font-size:11px;color:#667085">최고 기록 0일</span><div class="globalStreakNote">Python · Linux · React 통합 연속 기록</div></div>
+        <div class="statCard"><div class="statTitle">✅ 총 해결 문제 <span id="solvedLang" class="statLanguage">Python</span></div><b id="totalSolved" style="font-size:20px">0</b><br><span id="accuracyText" style="font-size:11px;color:#667085">전체 정답률 0%</span></div>
+      </div>
+      <div class="challenge">오늘의 도전<br><span id="challengeText" style="font-size:12px;opacity:.8">20문제 풀고 실력 확인하기!</span><button class="challengeBtn" onclick="startTodayChallenge()">시작하기 →</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<main class="container">
+
+<section class="courseSec">
+  <div class="courseGrid">
+    <div id="pythonCourse" class="courseCard selected" onclick="selectRoadmap('python')">
+      <div class="courseIcon">🐍</div>
+      <div class="courseBody">
+        <h3>Python 코딩 실습실 <span style="font-size:10px;background:#3c6cff;color:white;padding:3px 6px;border-radius:999px">추천</span></h3>
+        <p>기초 문법부터 프로젝트까지 단계별 학습</p>
+        <div class="tags">
+          <span class="tag">20문제</span>
+          <span class="tag">오답 힌트</span>
+          <span class="tag">단계별 난이도</span>
+          <span class="tag">100문제 문제은행</span>
+        </div>
+        <button class="courseStart" onclick="event.stopPropagation();location.href='python-stages.html'">학습 시작 →</button>
+      </div>
+    </div>
+
+    <div id="linuxCourse" class="courseCard" onclick="selectRoadmap('linux')">
+      <div class="courseIcon">🐧</div>
+      <div class="courseBody">
+        <h3>Linux 실습실</h3>
+        <p>명령어와 셸 스크립트를 실습으로 익혀요</p>
+        <div class="tags">
+          <span class="tag">명령어 실습</span>
+          <span class="tag">실전 과제</span>
+          <span class="tag">시스템 관리</span>
+        </div>
+        <button class="courseStart" onclick="event.stopPropagation();location.href='linux-stages.html'">학습 시작 →</button>
+      </div>
+    </div>
+
+    <div id="reactCourse" class="courseCard" onclick="selectRoadmap('react')">
+      <div class="courseIcon">⚛️</div>
+      <div class="courseBody">
+        <h3>React 실습실</h3>
+        <p>컴포넌트부터 배포까지 직접 만들어봐요</p>
+        <div class="tags">
+          <span class="tag">컴포넌트</span>
+          <span class="tag">상태 관리</span>
+          <span class="tag">실전 프로젝트</span>
+        </div>
+        <button class="courseStart" onclick="event.stopPropagation();location.href='react-stages.html'">학습 시작 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="roadSec">
+  <div class="sectionHead">
+    <div>
+      <span id="roadLangPill" class="langPill">PYTHON</span>
+      <h2 id="roadTitle">Python 학습 로드맵</h2>
+      <p id="roadDesc">기초부터 프로젝트까지, 체계적인 로드맵으로 학습하세요.</p>
+    </div>
+    <a id="fullRoadmapLink" href="python-roadmap.html" style="color:var(--blue);font-weight:900;font-size:13px">전체 로드맵 보기 →</a>
+  </div>
+
+  <div id="roadGrid" class="roadGrid"></div>
+
+  <div class="infoBar">
+    <div class="infoItem"><div class="infoIcon">◫</div><div><b id="infoStages">14단계</b><span>체계적인 학습 단계</span></div></div>
+    <div class="infoItem"><div class="infoIcon">▤</div><div><b id="infoQuestions">총 1,400문제</b><span>풍부한 문제은행</span></div></div>
+    <div class="infoItem"><div class="infoIcon">🔀</div><div><b>랜덤 20문제</b><span>매일 새로운 도전</span></div></div>
+    <div class="infoItem"><div class="infoIcon">💡</div><div><b>맞춤형 오답 힌트</b><span>이해를 돕는 힌트 제공</span></div></div>
+  </div>
+</section>
+
+
+<section class="bossMedalSection">
+  <div class="medalLeft">
+    <img class="medalIcon" src="boss-clear.png" alt="보스 메달">
+    <div>
+      <div class="medalTitle">👑 BOSS COLLECTION</div>
+      <div><span id="homeBossCollected" class="medalBig">0</span> / 42 보스 클리어</div>
+      <div id="homeBossBalance" class="medalNumbers">사용 가능한 메달 0개</div>
+    </div>
+  </div>
+  <a class="shopBtn" href="shop.html">🏪 메달 상점 가기 →</a>
+</section>
+
+</main>
+
+<footer class="footer"><div class="container footerRow"><b>◇ 코딩 학습실</b><span>이용 안내 · 자주 묻는 질문 · 문의하기 · 개인정보처리방침 · 이용약관</span><span>© Coding Study Lab</span></div></footer>
+<div id="toast" class="toast"></div>
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display='none',2400)}
+</script>
+
+<script>
+const STUDY_KEY="codingStudyStatsV1";
+
+function localDateKey(d=new Date()){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function dateFromKey(key){
+  const [y,m,d]=key.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+function addDays(date,delta){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  d.setDate(d.getDate()+delta);
+  return d;
+}
+function getStats(){
+  try{
+    const s=JSON.parse(localStorage.getItem(STUDY_KEY)||"{}");
+    return {
+      days:s.days||{},
+      totalSolvedIds:s.totalSolvedIds||[],
+      correctSubmissions:s.correctSubmissions||0,
+      wrongSubmissions:s.wrongSubmissions||0,
+      lastStage:s.lastStage||1
+    };
+  }catch(e){
+    return {days:{},totalSolvedIds:[],correctSubmissions:0,wrongSubmissions:0,lastStage:1};
+  }
+}
+function activeDayKeys(stats){
+  return Object.keys(stats.days).filter(k=>{
+    const day=stats.days[k]||{};
+    return Array.isArray(day.solvedIds) && day.solvedIds.length>0;
+  }).sort();
+}
+function calculateStreaks(stats){
+  const keys=activeDayKeys(stats);
+  if(!keys.length) return {current:0,best:0};
+
+  let best=1, run=1;
+  for(let i=1;i<keys.length;i++){
+    const prev=dateFromKey(keys[i-1]);
+    const cur=dateFromKey(keys[i]);
+    const diff=Math.round((cur-prev)/(24*60*60*1000));
+    if(diff===1){ run++; best=Math.max(best,run); }
+    else if(diff>1){ run=1; }
+  }
+
+  const today=new Date();
+  const todayKey=localDateKey(today);
+  const yesterdayKey=localDateKey(addDays(today,-1));
+  let endKey=null;
+  if(keys.includes(todayKey)) endKey=todayKey;
+  else if(keys.includes(yesterdayKey)) endKey=yesterdayKey;
+  else return {current:0,best};
+
+  let current=1;
+  let cursor=dateFromKey(endKey);
+  while(true){
+    cursor=addDays(cursor,-1);
+    const k=localDateKey(cursor);
+    if(keys.includes(k)) current++;
+    else break;
+  }
+  return {current,best};
+}
+function refreshDashboard(){
+  const s=getStats();
+  const todayKey=localDateKey();
+  const today=s.days[todayKey]||{};
+  const todayCount=Math.min(20,(today.solvedIds||[]).length);
+  const pct=Math.round(todayCount/20*100);
+  const streak=calculateStreaks(s);
+  const attempts=s.correctSubmissions+s.wrongSubmissions;
+  const accuracy=attempts?Math.round(s.correctSubmissions/attempts*100):0;
+
+  const circle=document.getElementById("todayCircle");
+  circle.style.setProperty("--progress",pct+"%");
+  circle.dataset.label=pct+"%";
+  document.getElementById("todaySolved").textContent=`${todayCount} / 20 문제`;
+  document.getElementById("todayStatus").textContent=
+    todayCount===0?"오늘 학습을 시작해보세요":
+    todayCount>=20?"오늘 목표를 달성했어요!":
+    `오늘 목표까지 ${20-todayCount}문제 남음`;
+
+  document.getElementById("streakDays").textContent=streak.current+"일";
+  document.getElementById("bestStreak").textContent="최고 기록 "+streak.best+"일";
+  document.getElementById("totalSolved").textContent=s.totalSolvedIds.length.toLocaleString();
+  document.getElementById("accuracyText").textContent="전체 정답률 "+accuracy+"%";
+  document.getElementById("challengeText").textContent=
+    todayCount>=20?"오늘 목표 완료! 새 세트에 도전해보세요.":
+    `${20-todayCount}문제 더 풀면 오늘 목표 달성!`;
+}
+function startTodayChallenge(){
+  const s=getStats();
+  const stage=Math.min(14,Math.max(1,Number(s.lastStage||1)));
+  location.href=`python-lab.html?stage=${stage}`;
+}
+window.addEventListener("storage",refreshDashboard);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshDashboard()});
+refreshDashboard();
+</script>
+
+<script>
+const INLINE_ROADMAPS = {
+  python: {
+    label:"PYTHON",
+    title:"Python 학습 로드맵",
+    desc:"기초부터 프로젝트까지, 체계적인 로드맵으로 학습하세요.",
+    full:"python-roadmap.html",
+    stages:"14단계",
+    questions:"총 1,400문제",
+    courseId:"pythonCourse",
+    cards:[
+      ["STEP 1","출력과 변수","기본 출력과 변수 사용법 익히기"],
+      ["STEP 2","조건문","조건을 판단하고 흐름 제어하기"],
+      ["STEP 3","반복문","반복 구조를 이해하고 활용하기"],
+      ["STEP 4","리스트와 문자열","자료 구조와 문자열 다루기"],
+      ["STEP 6","함수","함수 정의와 활용으로 코드 재사용"],
+      ["STEP 14","실전 프로젝트","배운 내용을 활용해 직접 완성하기"]
+    ]
+  },
+  linux: {
+    label:"LINUX",
+    title:"Linux 학습 로드맵",
+    desc:"터미널 기초부터 Bash와 시스템 관리까지 단계별로 학습하세요.",
+    full:"linux-roadmap.html",
+    stages:"14단계",
+    questions:"문제은행 준비 중",
+    courseId:"linuxCourse",
+    cards:[
+      ["STEP 1","터미널과 기본 명령어","pwd · ls · cd · clear 익히기"],
+      ["STEP 2","파일과 디렉터리","touch · mkdir · cp · mv · rm"],
+      ["STEP 3","경로 이해","절대경로와 상대경로 익히기"],
+      ["STEP 5","검색과 필터링","find · grep · sort · uniq"],
+      ["STEP 8","리다이렉션과 파이프","> · >> · | · tee 활용"],
+      ["STEP 14","리눅스 실전 프로젝트","백업 · 로그 분석 · 자동화"]
+    ]
+  },
+  react: {
+    label:"REACT",
+    title:"React 학습 로드맵",
+    desc:"HTML/CSS 기초부터 React 실전 프로젝트까지 단계별로 학습하세요.",
+    full:"react-roadmap.html",
+    stages:"14단계",
+    questions:"문제은행 준비 중",
+    courseId:"reactCourse",
+    cards:[
+      ["STEP 1","HTML 기초","문서 구조와 기본 태그 익히기"],
+      ["STEP 2","CSS 기초","Flex · Grid · 레이아웃"],
+      ["STEP 3","JavaScript 기초","변수 · 함수 · 배열 · 객체"],
+      ["STEP 5","React 시작","JSX · 컴포넌트 · 렌더링"],
+      ["STEP 7","State","useState로 상태 관리"],
+      ["STEP 14","React 실전 프로젝트","직접 웹앱 설계하고 완성하기"]
+    ]
+  }
+};
+
+function selectRoadmap(lang){
+  if(typeof refreshLanguageDashboard==="function") refreshLanguageDashboard(lang);
+  const data=INLINE_ROADMAPS[lang] || INLINE_ROADMAPS.python;
+
+  document.querySelectorAll(".courseCard").forEach(el=>el.classList.remove("selected"));
+  const selected=document.getElementById(data.courseId);
+  if(selected) selected.classList.add("selected");
+
+  document.getElementById("roadLangPill").textContent=data.label;
+  document.getElementById("roadTitle").textContent=data.title;
+  document.getElementById("roadDesc").textContent=data.desc;
+  document.getElementById("fullRoadmapLink").href=data.full;
+  document.getElementById("infoStages").textContent=data.stages;
+  document.getElementById("infoQuestions").textContent=data.questions;
+
+  const grid=document.getElementById("roadGrid");
+  grid.innerHTML="";
+  data.cards.forEach(item=>{
+    const card=document.createElement("div");
+    card.className="roadCard";
+    card.innerHTML=`<div class="step">${item[0]}</div><h4>${item[1]}</h4><p>${item[2]}</p>`;
+    grid.appendChild(card);
+  });
+
+  // keep selected roadmap in the URL so refresh preserves it
+  const url=new URL(location.href);
+  url.searchParams.set("roadmap",lang);
+  history.replaceState(null,"",url);
+
+  // scroll the roadmap into view when user actively selects a language card
+  if(event && event.type==="click"){
+    document.querySelector(".roadSec").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+}
+
+(function initInlineRoadmap(){
+  const lang=new URLSearchParams(location.search).get("roadmap") || "python";
+  // Initial render without forcing scroll
+  const oldEvent=window.event;
+  try{
+    Object.defineProperty(window,"event",{value:null,configurable:true});
+  }catch(e){}
+  selectRoadmap(lang);
+})();
+</script>
+
+
+<script>
+const STUDY_KEY_V2="codingStudyStatsV2";
+const OLD_STUDY_KEY="codingStudyStatsV1";
+
+function localDateKeyV2(d=new Date()){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function dateFromKeyV2(key){
+  const [y,m,d]=key.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+function addDaysV2(date,delta){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  d.setDate(d.getDate()+delta);
+  return d;
+}
+function emptyLangStats(){
+  return {
+    days:{},
+    totalSolvedIds:[],
+    correctSubmissions:0,
+    wrongSubmissions:0,
+    lastStage:1
+  };
+}
+function migrateOldStats(){
+  let existing=null;
+  try{existing=JSON.parse(localStorage.getItem(STUDY_KEY_V2)||"null")}catch(e){}
+  if(existing) return existing;
+
+  const fresh={
+    languages:{
+      python:emptyLangStats(),
+      linux:emptyLangStats(),
+      react:emptyLangStats()
+    },
+    globalDays:{}
+  };
+
+  // Previous version stored Python only. Preserve it as Python data.
+  try{
+    const old=JSON.parse(localStorage.getItem(OLD_STUDY_KEY)||"null");
+    if(old){
+      fresh.languages.python={
+        days:old.days||{},
+        totalSolvedIds:old.totalSolvedIds||[],
+        correctSubmissions:old.correctSubmissions||0,
+        wrongSubmissions:old.wrongSubmissions||0,
+        lastStage:old.lastStage||1
+      };
+      Object.keys(old.days||{}).forEach(k=>{
+        const d=old.days[k]||{};
+        if((d.solvedIds||[]).length>0) fresh.globalDays[k]=true;
+      });
+    }
+  }catch(e){}
+
+  try{localStorage.setItem(STUDY_KEY_V2,JSON.stringify(fresh))}catch(e){}
+  return fresh;
+}
+function getUnifiedStats(){
+  let s=migrateOldStats();
+  s.languages=s.languages||{};
+  ["python","linux","react"].forEach(lang=>{
+    s.languages[lang]=Object.assign(emptyLangStats(),s.languages[lang]||{});
+  });
+  s.globalDays=s.globalDays||{};
+  return s;
+}
+function saveUnifiedStats(s){
+  try{localStorage.setItem(STUDY_KEY_V2,JSON.stringify(s))}catch(e){}
+}
+function activeGlobalDayKeys(stats){
+  return Object.keys(stats.globalDays||{}).filter(k=>stats.globalDays[k]).sort();
+}
+function calculateGlobalStreaks(stats){
+  const keys=activeGlobalDayKeys(stats);
+  if(!keys.length) return {current:0,best:0};
+
+  let best=1,run=1;
+  for(let i=1;i<keys.length;i++){
+    const prev=dateFromKeyV2(keys[i-1]);
+    const cur=dateFromKeyV2(keys[i]);
+    const diff=Math.round((cur-prev)/(24*60*60*1000));
+    if(diff===1){run++;best=Math.max(best,run);}
+    else if(diff>1){run=1;}
+  }
+
+  const today=new Date();
+  const todayKey=localDateKeyV2(today);
+  const yesterdayKey=localDateKeyV2(addDaysV2(today,-1));
+  let endKey=null;
+  if(keys.includes(todayKey))endKey=todayKey;
+  else if(keys.includes(yesterdayKey))endKey=yesterdayKey;
+  else return {current:0,best};
+
+  let current=1,cursor=dateFromKeyV2(endKey);
+  while(true){
+    cursor=addDaysV2(cursor,-1);
+    if(keys.includes(localDateKeyV2(cursor)))current++;
+    else break;
+  }
+  return {current,best};
+}
+
+const LANG_META={
+  python:{label:"Python",emoji:"🐍"},
+  linux:{label:"Linux",emoji:"🐧"},
+  react:{label:"React",emoji:"⚛️"}
+};
+let selectedDashboardLanguage="python";
+
+function getSelectedLangStats(){
+  const all=getUnifiedStats();
+  return {all,lang:all.languages[selectedDashboardLanguage]};
+}
+function refreshLanguageDashboard(lang=selectedDashboardLanguage){
+  selectedDashboardLanguage=lang;
+  const {all,lang:ls}=getSelectedLangStats();
+  const todayKey=localDateKeyV2();
+  const today=(ls.days||{})[todayKey]||{};
+  const todayCount=Math.min(20,(today.solvedIds||[]).length);
+  const pct=Math.round(todayCount/20*100);
+  const attempts=(ls.correctSubmissions||0)+(ls.wrongSubmissions||0);
+  const accuracy=attempts?Math.round((ls.correctSubmissions||0)/attempts*100):0;
+  const streak=calculateGlobalStreaks(all);
+  const meta=LANG_META[selectedDashboardLanguage];
+
+  const circle=document.getElementById("todayCircle");
+  if(circle){
+    circle.style.setProperty("--progress",pct+"%");
+    circle.dataset.label=pct+"%";
+  }
+  if(document.getElementById("todaySolved"))document.getElementById("todaySolved").textContent=`${todayCount} / 20 문제`;
+  if(document.getElementById("todayStatus")){
+    document.getElementById("todayStatus").textContent=
+      todayCount===0?`${meta.label} 학습을 시작해보세요`:
+      todayCount>=20?`${meta.label} 오늘 목표 달성!`:
+      `오늘 목표까지 ${20-todayCount}문제 남음`;
+  }
+  if(document.getElementById("progressLang"))document.getElementById("progressLang").textContent=meta.label;
+  if(document.getElementById("solvedLang"))document.getElementById("solvedLang").textContent=meta.label;
+  if(document.getElementById("totalSolved"))document.getElementById("totalSolved").textContent=(ls.totalSolvedIds||[]).length.toLocaleString();
+  if(document.getElementById("accuracyText"))document.getElementById("accuracyText").textContent="전체 정답률 "+accuracy+"%";
+  if(document.getElementById("streakDays"))document.getElementById("streakDays").textContent=streak.current+"일";
+  if(document.getElementById("bestStreak"))document.getElementById("bestStreak").textContent="최고 기록 "+streak.best+"일";
+  if(document.getElementById("challengeText")){
+    document.getElementById("challengeText").textContent=
+      todayCount>=20?`${meta.label} 오늘 목표 완료!`:`${20-todayCount}문제 더 풀면 오늘 목표 달성!`;
+  }
+
+  setTmiLanguage(selectedDashboardLanguage);
+}
+function startTodayChallenge(){
+  const s=getUnifiedStats();
+  const lang=selectedDashboardLanguage;
+  const stage=Math.min(14,Math.max(1,Number((s.languages[lang]||{}).lastStage||1)));
+  if(lang==="python") location.href=`python-lab.html?stage=${stage}`;
+  else if(lang==="linux") location.href=`linux-lab.html?stage=${stage}`;
+  else location.href=`react-lab.html?stage=${stage}`;
+}
+window.addEventListener("storage",()=>refreshLanguageDashboard());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshLanguageDashboard()});
+</script>
+
+<script>
+const TMI_DATA={
+  python:[
+    ["🐍","Python이라는 이름은 뱀에서 온 게 아니에요.","개발자 귀도 반 로섬이 좋아하던 영국 코미디 프로그램 ‘Monty Python’에서 이름을 가져왔어요."],
+    ["🧠","Python은 읽기 쉬운 코드를 중요하게 생각해요.","파이썬의 설계 철학에는 ‘가독성이 중요하다’는 생각이 강하게 반영되어 있어요."],
+    ["📦","Python에는 기본으로 제공되는 기능이 아주 많아요.","그래서 Python을 ‘batteries included’ 언어라고 부르기도 해요."],
+    ["🔢","Python의 정수는 매우 큰 수도 다룰 수 있어요.","다른 언어처럼 일반적인 32비트·64비트 정수 한계에 꼭 묶이지 않아요."]
+  ],
+  linux:[
+    ["🐧","Linux 마스코트 펭귄의 이름은 Tux예요.","1990년대부터 Linux를 상징하는 마스코트로 널리 사용되고 있어요."],
+    ["🖥️","Linux는 서버에서 매우 많이 사용돼요.","웹 서버, 클라우드, 슈퍼컴퓨터 등 다양한 환경에서 Linux를 만날 수 있어요."],
+    ["📂","Linux에서는 많은 것이 파일처럼 다뤄져요.","장치나 시스템 정보도 파일 형태의 인터페이스로 접근하는 경우가 많아요."],
+    ["⌨️","터미널 명령어는 조합할수록 강력해져요.","작은 명령들을 파이프로 연결하면 복잡한 작업도 짧은 한 줄로 처리할 수 있어요."]
+  ],
+  react:[
+    ["⚛️","React는 라이브러리예요.","공식적으로는 사용자 인터페이스를 만들기 위한 JavaScript 라이브러리로 소개돼요."],
+    ["🧩","React의 핵심은 컴포넌트예요.","UI를 작은 조각으로 나누고 재사용하면서 큰 화면을 구성할 수 있어요."],
+    ["🔁","State가 바뀌면 화면도 다시 반영돼요.","React는 상태 변화에 따라 필요한 UI를 다시 계산하고 업데이트해요."],
+    ["🌳","React는 UI를 선언적으로 작성해요.","‘어떻게 바꿀지’보다 ‘현재 상태에서 무엇을 보여줄지’를 코드로 표현하는 방식이에요."]
+  ]
+};
+const tmiIndex={python:0,linux:0,react:0};
+function setTmiLanguage(lang){
+  const arr=TMI_DATA[lang]||TMI_DATA.python;
+  const idx=tmiIndex[lang]%arr.length;
+  const [emoji,title,text]=arr[idx];
+  document.getElementById("tmiLang").textContent=(LANG_META[lang]||LANG_META.python).label.toUpperCase();
+  document.getElementById("tmiEmoji").textContent=emoji;
+  document.getElementById("tmiTitle").textContent=title;
+  document.getElementById("tmiText").textContent=text;
+}
+function nextTmi(){
+  tmiIndex[selectedDashboardLanguage]=(tmiIndex[selectedDashboardLanguage]+1)%TMI_DATA[selectedDashboardLanguage].length;
+  setTmiLanguage(selectedDashboardLanguage);
+}
+</script>
+
+<script>setTimeout(()=>{const l=new URLSearchParams(location.search).get("roadmap")||"python";refreshLanguageDashboard(l)},0);</script>
+
+<div id="infoModalOverlay" class="infoModalOverlay" onclick="modalOutsideClose(event)">
+  <section class="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+    <div class="infoModalHead">
+      <h2 id="infoModalTitle">안내</h2>
+      <button class="infoModalClose" onclick="closeInfoModal()">✕</button>
+    </div>
+    <div id="infoModalBody" class="infoModalBody"></div>
+  </section>
+</div>
+
+<script>
+const INFO_CONTENT = {
+  coding: {
+    title: "코딩이란",
+    body: `
+      <h3>코딩이란 무엇인가요?</h3>
+      <p>
+        코딩은 컴퓨터가 이해하고 실행할 수 있도록 명령을 작성하는 과정입니다.
+        우리가 원하는 기능을 작은 단계로 나누고, 프로그래밍 언어를 이용해 컴퓨터에게 정확하게 알려주는 일이에요.
+      </p>
+
+      <h3>왜 코딩이 중요한가요?</h3>
+      <p>
+        코딩을 배우면 단순히 프로그램을 만드는 것뿐 아니라,
+        문제를 순서대로 분석하고 해결 방법을 논리적으로 설계하는 힘을 기를 수 있습니다.
+        웹사이트, 앱, 게임, 자동화 프로그램, 데이터 분석, 인공지능 등 많은 기술이 코딩을 기반으로 만들어집니다.
+      </p>
+
+      <h3>코딩을 배우면 할 수 있는 것</h3>
+      <ul>
+        <li>내가 원하는 프로그램을 직접 만들 수 있습니다.</li>
+        <li>반복되는 작업을 자동화할 수 있습니다.</li>
+        <li>웹사이트와 앱의 동작 원리를 이해할 수 있습니다.</li>
+        <li>문제를 작은 단위로 나누어 해결하는 사고방식을 익힐 수 있습니다.</li>
+      </ul>
+
+      <h3>이 사이트에서는 어떻게 배우나요?</h3>
+      <p>
+        Python, Linux, React를 단계별 문제 풀이 방식으로 학습하고,
+        힌트와 오답 분석을 통해 정답을 외우기보다 직접 생각하면서 익히는 것을 목표로 합니다.
+      </p>
+    `
+  },
+
+  reason: {
+    title: "사이트 개설 이유",
+    body: `<div class="reasonMessage">돈벌려고</div>`
+  },
+
+  notice: {
+    title: "공지사항",
+    body: `
+      <div class="noticeEmpty">
+        <div style="font-size:34px;margin-bottom:10px">📢</div>
+        <b style="color:#334155">현재 등록된 공지사항이 없습니다.</b>
+        <div style="font-size:13px;margin-top:6px">새로운 소식이 생기면 이곳에 표시됩니다.</div>
+      </div>
+    `
+  }
+};
+
+function openInfoModal(type){
+  const data = INFO_CONTENT[type];
+  if(!data) return;
+  document.getElementById("infoModalTitle").textContent = data.title;
+  document.getElementById("infoModalBody").innerHTML = data.body;
+  document.getElementById("infoModalOverlay").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeInfoModal(){
+  document.getElementById("infoModalOverlay").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function modalOutsideClose(event){
+  if(event.target.id === "infoModalOverlay"){
+    closeInfoModal();
+  }
+}
+
+document.addEventListener("keydown", (event) => {
+  if(event.key === "Escape"){
+    closeInfoModal();
+  }
+});
+</script>
+
+
+<script src="boss-economy.js"></script>
+<script>
+(function(){
+  function refreshBossMedals(){
+    const collected=BossEconomy.collected();
+    const balance=BossEconomy.balance();
+    const c=document.getElementById("homeBossCollected");
+    const b=document.getElementById("homeBossBalance");
+    if(c)c.textContent=collected;
+    if(b)b.textContent=`사용 가능한 메달 ${balance}개 · 상점에서 사용할 수 있어요`;
+  }
+  window.addEventListener("storage",refreshBossMedals);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshBossMedals()});
+  refreshBossMedals();
+})();
+</script>
+
+</body></html>
